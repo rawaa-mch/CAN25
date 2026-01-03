@@ -38,7 +38,7 @@ interface Post {
     chat_comments: Comment[];
 }
 
-const Chat = () => {
+const CommunicationPage = () => {
     const { user } = useAuth();
     const queryClient = useQueryClient();
     const [title, setTitle] = useState("");
@@ -66,10 +66,10 @@ const Chat = () => {
 
     // Initialize or get fake name from localStorage if not logged in
     useEffect(() => {
-        let storedName = localStorage.getItem("chat_user_name");
+        let storedName = localStorage.getItem("communication_user_name");
         if (!storedName) {
             storedName = "Fan de Foot " + Math.floor(Math.random() * 1000);
-            localStorage.setItem("chat_user_name", storedName);
+            localStorage.setItem("communication_user_name", storedName);
         }
         setLocalUserName(storedName);
     }, []);
@@ -207,7 +207,7 @@ const Chat = () => {
                         <div>
                             <h1 className="text-3xl font-bold text-slate-900 tracking-tight flex items-center gap-3">
                                 <MessageSquare className="w-8 h-8 text-royal-emerald" />
-                                Forum Communautaire
+                                Espace Communication
                             </h1>
                             <p className="text-slate-500 font-medium mt-1">
                                 Analyses techniques et discussions autour de la CAN 2025
@@ -221,11 +221,11 @@ const Chat = () => {
                             </div>
                             <Button
                                 onClick={() => setIsFormOpen(!isFormOpen)}
-                                className={`h-11 px-6 rounded-lg font-bold transition-all shadow-sm ${isFormOpen ? 'bg-slate-200 text-slate-700 hover:bg-slate-300' : 'bg-royal-emerald text-white hover:bg-royal-emerald/90'}`}
+                                className={`h-11 px-6 rounded-lg font-bold transition-all shadow-sm ${isFormOpen ? 'bg-slate-200 text-black hover:bg-slate-300' : 'bg-royal-emerald text-black hover:bg-royal-emerald/90'}`}
                             >
                                 {isFormOpen ? 'Annuler' : (
                                     <>
-                                        <Plus className="w-4 h-4 mr-2" />
+                                        <Plus className="w-4 h-4 mr-2 text-black " />
                                         Nouveau Sujet
                                     </>
                                 )}
@@ -284,7 +284,7 @@ const Chat = () => {
 
                                                 <Button
                                                     disabled={shareMutation.isPending || !title.trim() || !content.trim()}
-                                                    className="h-10 px-6 bg-royal-emerald hover:bg-royal-emerald/90 text-white rounded-lg font-bold shadow-sm transition-all"
+                                                    className="h-10 px-6 bg-royal-emerald hover:bg-royal-emerald/90 text-black rounded-lg font-bold shadow-sm transition-all"
                                                 >
                                                     {shareMutation.isPending ? "Publication..." : (editingId ? "Enregistrer" : "Publier le sujet")}
                                                 </Button>
@@ -533,4 +533,4 @@ const Chat = () => {
     );
 };
 
-export default Chat;
+export default CommunicationPage;

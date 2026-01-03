@@ -47,7 +47,7 @@ export function Header() {
 
           {/* Premium Desktop Navigation */}
           <nav className="hidden lg:flex items-center gap-8">
-            {['Matches', 'Groups', 'Tableau', 'Chat'].map((item) => (
+            {['Matches', 'Groups', 'Tableau', 'Communication'].map((item) => (
               <Link
                 key={item}
                 to={item === 'Matches' ? '/' : (item === 'Tableau' ? '/bracket' : `/${item.toLowerCase()}`)}
@@ -113,7 +113,7 @@ export function Header() {
         {mobileMenuOpen && (
           <div className="lg:hidden py-6 border-t border-royal-emerald/5 bg-white/20 backdrop-blur-3xl animate-in slide-in-from-top duration-500">
             <nav className="flex flex-col gap-3 px-6">
-              {['Matches', 'Groups', 'Tableau', 'Chat'].map((item) => (
+              {['Matches', 'Groups', 'Tableau', 'Communication'].map((item) => (
                 <Link
                   key={item}
                   to={item === 'Matches' ? '/' : (item === 'Tableau' ? '/bracket' : `/${item.toLowerCase()}`)}
