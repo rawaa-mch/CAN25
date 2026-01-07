@@ -7,8 +7,8 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import {
   MessageSquare, Send, Heart, ThumbsDown,
-  Trash2, Edit2, ImageIcon, Users,
-  Calendar, Plus, Globe
+  Trash2, Edit2, Users,
+  Calendar, Plus, Globe, Flame, Sparkles, X, Image as ImageIcon, SendHorizontal
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
@@ -304,6 +304,17 @@ const Chat = () => {
     ? [...localPosts, ...FALLBACK_POSTS]
     : [...localPosts, ...(posts || [])];
 
+  // Helper function to check if a post is "Trending"
+  const isTrending = (post: Post) => post.likes > 5 || post.chat_comments.length > 5;
+
+  // Helper function to check if a post is "New" (created < 1 hour ago)
+  const isNew = (post: Post) => {
+    const postDate = new Date(post.created_at);
+    const now = new Date();
+    const diff = now.getTime() - postDate.getTime();
+    return diff < 1000 * 60 * 60; // 1 hour
+  };
+
   // Mutations
   const shareMutation = useMutation({
     mutationFn: async () => {
@@ -447,45 +458,34 @@ const Chat = () => {
 
       <main className="container mx-auto px-4 pt-32 pb-24 relative z-10">
         <div className="max-w-6xl mx-auto">
-          {/* Header */}
-          <div className="mb-8 flex flex-col md:flex-row md:items-center justify-between gap-6 border-b border-slate-200 pb-8">
-            <div>
-              <h1 className="text-3xl font-bold text-slate-900 tracking-tight flex items-center gap-3">
-                <MessageSquare className="w-8 h-8 text-royal-emerald" />
-                {t('chat.forum')}
-              </h1>
-              <p className="text-slate-500 font-medium mt-1">
-                {t('chat.subtitle')}
-              </p>
-            </div>
-            <div className="flex items-center gap-3">
-              <div className="hidden sm:flex items-center gap-2 px-4 py-2 bg-white rounded-lg border border-slate-200 text-xs font-bold text-slate-600">
-                <Users className="w-4 h-4" />
-                1,240 {t('common.online')}
-              </div>
-              <Button
-                onClick={() => setIsFormOpen(!isFormOpen)}
-                className={`h-11 px-6 rounded-lg font-bold transition-all ${isFormOpen
-                  ? 'bg-blue-200 text-blue-700 hover:bg-blue-300 shadow-sm'
-                  : 'bg-blue-600 text-white hover:bg-blue-700 shadow-md ring-1 ring-blue-600/20 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-blue-600'
-                  }`}
-              >
-                {isFormOpen ? t('chat.cancel') : (
-                  <>
-                    <Plus className="w-4 h-4 mr-2" />
-                    {t('chat.new_topic')}
-                  </>
-                )}
-              </Button>
-            </div>
-          </div>
-
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
             {/* Feed */}
             <div className="lg:col-span-8 space-y-6">
-              {isFormOpen && (
-                <Card className="border border-slate-200 shadow-sm rounded-xl overflow-hidden bg-white animate-in slide-in-from-top-2 duration-300">
+
+              {/* Create Post Area - Social Media Style */}
+              {!isFormOpen ? (
+                <Card className="border border-slate-200 shadow-sm rounded-xl overflow-hidden bg-white hover:shadow-md transition-shadow cursor-pointer" onClick={() => setIsFormOpen(true)}>
+                  <CardContent className="p-4 flex items-center gap-4">
+                    <Avatar className="h-10 w-10 border border-slate-100 shrink-0">
+                      <AvatarFallback className="bg-slate-100 text-slate-600 font-bold uppercase">{activeUserName.charAt(0)}</AvatarFallback>
+                    </Avatar>
+                    <div className="flex-1 bg-slate-50 hover:bg-slate-100 transition-colors rounded-full h-11 px-5 flex items-center text-slate-500 font-medium cursor-text">
+                      {t('chat.placeholder_title') || "What's on your mind?"}
+                    </div>
+                    <Button size="icon" variant="ghost" className="text-royal-emerald hover:bg-emerald-50 rounded-full">
+                      <ImageIcon className="w-5 h-5" />
+                    </Button>
+                  </CardContent>
+                </Card>
+              ) : (
+                <Card className="border border-royal-emerald/20 shadow-lg rounded-xl overflow-hidden bg-white animate-in slide-in-from-top-2 duration-300 ring-1 ring-royal-emerald/10">
                   <CardContent className="p-6">
+                    <div className="flex items-center justify-between mb-4 border-b border-slate-100 pb-3">
+                      <h3 className="font-bold text-slate-700">Create New Post</h3>
+                      <Button variant="ghost" size="sm" onClick={() => setIsFormOpen(false)} className="h-8 w-8 p-0 rounded-full hover:bg-slate-100">
+                        <X className="w-4 h-4 text-slate-400" />
+                      </Button>
+                    </div>
                     <form
                       onSubmit={(e) => { e.preventDefault(); shareMutation.mutate(); }}
                       className="space-y-4"
@@ -498,6 +498,7 @@ const Chat = () => {
                           <Input
                             placeholder={t('chat.placeholder_title')}
                             value={title}
+                            autoFocus
                             onChange={(e) => setTitle(e.target.value)}
                             className="h-11 border-slate-200 focus:border-royal-emerald focus:ring-1 focus:ring-royal-emerald rounded-lg font-bold text-slate-900"
                           />
@@ -529,9 +530,10 @@ const Chat = () => {
                         </div>
                         <Button
                           disabled={shareMutation.isPending || !title.trim() || !content.trim()}
-                          className="h-10 px-6 bg-blue-600 text-white hover:bg-blue-700 rounded-lg font-bold shadow-md transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-blue-600"
+                          className="h-10 px-6 bg-royal-emerald text-white hover:bg-emerald-700 rounded-full font-bold shadow-md transition-all active:scale-95"
                         >
-                          {shareMutation.isPending ? t('chat.publishing') : (editingId ? t('common.save') : t('chat.publish'))}
+                          {shareMutation.isPending ? t('chat.publishing') : (editingId ? t('common.save') : "Post")}
+                          <SendHorizontal className="w-4 h-4 ml-2" />
                         </Button>
                       </div>
 
@@ -568,24 +570,36 @@ const Chat = () => {
                   </div>
                 ) : (
                   displayPosts?.map((post) => (
-                    <Card key={post.id} className="border border-slate-200 shadow-sm rounded-xl overflow-hidden bg-white hover:border-royal-emerald/30 transition-all duration-300">
-                      <div className="p-5">
+                    <Card key={post.id} className="group border border-slate-200/60 shadow-sm rounded-2xl overflow-hidden bg-white/80 backdrop-blur-sm hover:shadow-md hover:border-royal-emerald/30 transition-all duration-300">
+                      <div className="p-6">
                         {/* Post Header */}
-                        <div className="flex items-center justify-between mb-4">
+                        <div className="flex items-start justify-between mb-4">
                           <div className="flex items-center gap-3">
-                            <Avatar className="h-9 w-9 border border-slate-100 shrink-0">
-                              <AvatarFallback className="bg-slate-50 text-slate-600 font-bold text-xs uppercase">
+                            <Avatar className="h-11 w-11 border-2 border-white shadow-sm shrink-0">
+                              <AvatarFallback className="bg-gradient-to-br from-royal-emerald/10 to-blue-500/10 text-slate-700 font-bold text-sm uppercase">
                                 {post.user_name.charAt(0)}
                               </AvatarFallback>
                             </Avatar>
                             <div>
                               <div className="flex items-center gap-2">
-                                <span className="font-bold text-slate-900 text-sm">{post.user_name}</span>
-                                <span className="text-[10px] text-slate-400 font-bold flex items-center gap-1 uppercase tracking-wider">
-                                  <Calendar className="w-3 h-3" />
-                                  {formatDistanceToNow(new Date(post.created_at), { addSuffix: true, locale: dateLocale })}
-                                </span>
+                                <span className="font-bold text-slate-900">{post.user_name}</span>
+                                {/* Badges */}
+                                {isTrending(post) && (
+                                  <span className="flex items-center gap-1 px-2 py-0.5 rounded-full bg-orange-50 text-orange-600 text-[10px] font-bold border border-orange-100">
+                                    <Flame className="w-3 h-3 fill-orange-500" />
+                                    Hashtags
+                                  </span>
+                                )}
+                                {isNew(post) && (
+                                  <span className="flex items-center gap-1 px-2 py-0.5 rounded-full bg-blue-50 text-blue-600 text-[10px] font-bold border border-blue-100">
+                                    <Sparkles className="w-3 h-3 fill-blue-400" />
+                                    New
+                                  </span>
+                                )}
                               </div>
+                              <span className="text-xs text-slate-400 font-medium flex items-center gap-1">
+                                {formatDistanceToNow(new Date(post.created_at), { addSuffix: true, locale: dateLocale })}
+                              </span>
                             </div>
                           </div>
 
@@ -593,27 +607,25 @@ const Chat = () => {
                           {((user?.id && user.id === post.user_id) ||
                             (!user?.id && !post.user_id && post.user_name === activeUserName) ||
                             (post.id.startsWith('local-') && post.user_name === activeUserName)) && (
-                              <div className="flex gap-1">
-                                <Button variant="ghost" size="icon" onClick={() => handleEdit(post)} className="h-8 w-8 rounded-md hover:bg-slate-100 text-slate-400">
-                                  <Edit2 className="w-3.5 h-3.5" />
+                              <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                                <Button variant="ghost" size="icon" onClick={() => handleEdit(post)} className="h-8 w-8 rounded-full hover:bg-slate-100 text-slate-400">
+                                  <Edit2 className="w-4 h-4" />
                                 </Button>
-                                <Button variant="ghost" size="icon" onClick={() => deleteMutation.mutate(post.id)} className="h-8 w-8 rounded-md hover:bg-red-50 text-slate-400 hover:text-red-500">
-                                  <Trash2 className="w-3.5 h-3.5" />
+                                <Button variant="ghost" size="icon" onClick={() => deleteMutation.mutate(post.id)} className="h-8 w-8 rounded-full hover:bg-red-50 text-slate-400 hover:text-red-500">
+                                  <Trash2 className="w-4 h-4" />
                                 </Button>
                               </div>
                             )}
                         </div>
 
                         {/* Post Body */}
-                        <div className="flex flex-col md:flex-row gap-6">
-                          <div className="flex-1">
-                            <h3 className="text-xl font-bold text-slate-900 mb-2 leading-tight">
-                              {translatedContent[`title-${post.id}`] || post.title}
-                            </h3>
-                            <p className="text-slate-600 font-medium text-sm leading-relaxed line-clamp-3 mb-4">
-                              {translatedContent[`content-${post.id}`] || post.content}
-                            </p>
-                            <div className="flex gap-2">
+                        <div className="flex flex-col gap-4">
+                          <div className="space-y-2">
+                            {/* Title & Translate Button */}
+                            <div className="flex items-start justify-between gap-4">
+                              <h3 className="text-lg font-bold text-slate-900 leading-tight">
+                                {translatedContent[`title-${post.id}`] || post.title}
+                              </h3>
                               <Button
                                 variant="ghost"
                                 size="sm"
@@ -621,48 +633,53 @@ const Chat = () => {
                                   handleTranslate(`title-${post.id}`, post.title);
                                   handleTranslate(`content-${post.id}`, post.content);
                                 }}
-                                className="text-xs h-7 px-2 text-slate-400 hover:text-royal-emerald hover:bg-emerald-50"
+                                className="shrink-0 h-8 px-3 rounded-full text-xs font-bold text-slate-400 hover:text-royal-emerald hover:bg-emerald-50 transition-colors"
                                 disabled={isTranslating[`title-${post.id}`]}
                               >
-                                <Globe className="w-3 h-3 mr-1" />
+                                <Sparkles className={`w-3.5 h-3.5 mr-1.5 ${translatedContent[`title-${post.id}`] ? 'text-royal-emerald fill-current' : ''}`} />
                                 {isTranslating[`title-${post.id}`]
                                   ? "..."
-                                  : (translatedContent[`title-${post.id}`] ? "Voir l'original" : "Traduire")}
+                                  : (translatedContent[`title-${post.id}`] ? "Original" : "Translate")}
                               </Button>
                             </div>
+
+                            <p className="text-slate-600 leading-relaxed text-[15px]">
+                              {translatedContent[`content-${post.id}`] || post.content}
+                            </p>
                           </div>
+
                           {post.image_url && (
-                            <div className="w-full md:w-32 h-24 shrink-0 rounded-lg overflow-hidden border border-slate-100">
-                              <img src={post.image_url} alt={post.title} className="w-full h-full object-cover" />
+                            <div className="rounded-xl overflow-hidden border border-slate-100 shadow-sm">
+                              <img src={post.image_url} alt={post.title} className="w-full h-auto max-h-[400px] object-cover" />
                             </div>
                           )}
                         </div>
 
-                        {/* Reactions */}
-                        <div className="flex items-center gap-4 pt-4 border-t border-slate-50">
+                        {/* Reactions & Actions */}
+                        <div className="flex items-center gap-3 pt-4 mt-4 border-t border-slate-100/60">
                           <button
                             onClick={() => handleReaction(post.id, 'like')}
-                            className={`flex items-center gap-1.5 text-xs font-bold transition-all active:scale-95 duration-200
-                              ${getReaction(post.id) === 'like'
-                                ? 'text-green-600 bg-green-50 shadow-sm border border-green-100 ring-1 ring-green-500/20'
-                                : 'text-slate-500 hover:text-green-600 hover:bg-green-50/50'}
-                              rounded-md px-3 py-1.5`}
+                            className={`flex items-center gap-2 px-4 py-2 rounded-full text-xs font-bold transition-all active:scale-95 duration-200
+                                ${getReaction(post.id) === 'like'
+                                ? 'bg-green-50 text-green-600 shadow-sm ring-1 ring-green-500/20'
+                                : 'bg-slate-50 text-slate-500 hover:bg-slate-100 hover:text-slate-700'}`}
                           >
                             <Heart className={`w-4 h-4 ${getReaction(post.id) === 'like' ? 'fill-current' : ''}`} />
-                            {post.likes}
+                            <span>{post.likes || "Like"}</span>
                           </button>
 
                           <button
                             onClick={() => handleReaction(post.id, 'dislike')}
-                            className={`flex items-center gap-1.5 text-xs font-bold transition-all active:scale-95 duration-200
-                              ${getReaction(post.id) === 'dislike'
-                                ? 'text-red-500 bg-red-50 shadow-sm border border-red-100 ring-1 ring-red-500/20'
-                                : 'text-slate-500 hover:text-red-500 hover:bg-red-50/50'}
-                              rounded-md px-3 py-1.5`}
+                            className={`flex items-center gap-2 px-4 py-2 rounded-full text-xs font-bold transition-all active:scale-95 duration-200
+                                ${getReaction(post.id) === 'dislike'
+                                ? 'bg-red-50 text-red-600 shadow-sm ring-1 ring-red-500/20'
+                                : 'bg-slate-50 text-slate-500 hover:bg-slate-100 hover:text-slate-700'}`}
                           >
                             <ThumbsDown className={`w-4 h-4 ${getReaction(post.id) === 'dislike' ? 'fill-current' : ''}`} />
-                            {post.dislikes}
+                            {post.dislikes > 0 && <span>{post.dislikes}</span>}
                           </button>
+
+                          <div className="flex-1" />
 
                           <button
                             onClick={() => {
@@ -671,11 +688,15 @@ const Chat = () => {
                                 commentSection.classList.toggle('hidden');
                               }
                             }}
-                            className="flex items-center gap-1.5 text-xs font-bold text-slate-400 hover:text-blue-600 hover:bg-slate-50 rounded-md px-2 py-1 transition-colors"
+                            className="flex items-center gap-2 px-4 py-2 rounded-full text-xs font-bold text-slate-500 hover:bg-blue-50 hover:text-blue-600 transition-all active:scale-95 bg-slate-50"
                           >
                             <MessageSquare className="w-4 h-4" />
-                            {post.chat_comments?.length || 0}
+                            <span>{post.chat_comments?.length || "Comment"}</span>
                           </button>
+
+                          <Button variant="ghost" size="icon" className="h-9 w-9 rounded-full text-slate-400 hover:text-slate-600">
+                            <Globe className="w-4 h-4" />
+                          </Button>
                         </div>
 
                         {/* Comments Section */}
