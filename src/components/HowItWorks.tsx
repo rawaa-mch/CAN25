@@ -1,33 +1,36 @@
 import { UserPlus, Edit3, Trophy, BarChart3 } from "lucide-react";
-
-const steps = [
-  {
-    title: "Create an account",
-    description: "Sign up or log in to start making your CANGOAL predictions.",
-    icon: UserPlus,
-  },
-  {
-    title: "Predict matches",
-    description: "Choose match winners and scores for each game.",
-    icon: Edit3,
-  },
-  {
-    title: "Earn points",
-    description: "Get points for correct predictions and results.",
-    icon: Trophy,
-  },
-  {
-    title: "Check rankings",
-    description: "See your position on the leaderboard and compare scores.",
-    icon: BarChart3,
-  },
-];
+import { useTranslation } from "react-i18next";
 
 export function HowItWorks() {
+  const { t } = useTranslation();
+
+  const steps = [
+    {
+      title: t('how_it_works.steps.account.title'),
+      description: t('how_it_works.steps.account.desc'),
+      icon: UserPlus,
+    },
+    {
+      title: t('how_it_works.steps.predict.title'),
+      description: t('how_it_works.steps.predict.desc'),
+      icon: Edit3,
+    },
+    {
+      title: t('how_it_works.steps.points.title'),
+      description: t('how_it_works.steps.points.desc'),
+      icon: Trophy,
+    },
+    {
+      title: t('how_it_works.steps.rankings.title'),
+      description: t('how_it_works.steps.rankings.desc'),
+      icon: BarChart3,
+    },
+  ];
+
   return (
     <section className="relative py-20 bg-black/40 backdrop-blur-md">
       <h2 className="text-center text-4xl md:text-5xl font-display text-white mb-12">
-        How it works
+        {t('how_it_works.title')}
       </h2>
 
       <div className="container mx-auto px-4">

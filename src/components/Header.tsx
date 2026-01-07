@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Trophy, LogOut, User, LayoutDashboard, Menu, X, Languages, ChevronDown } from 'lucide-react';
 import { useState } from 'react';
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
+import { useTranslation } from 'react-i18next';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -17,9 +18,14 @@ export function Header() {
   const { user, isAdmin, signOut } = useAuth();
   const navigate = useNavigate();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const { t, i18n } = useTranslation();
+
+  const changeLanguage = (lng: string) => {
+    i18n.changeLanguage(lng);
+  };
 
   // Get user info from metadata (works for both real Supabase and Demo Auth)
-  const fullName = user?.user_metadata?.full_name || user?.email?.split('@')[0] || 'Member';
+  const fullName = user?.user_metadata?.full_name || user?.email?.split('@')[0] || t('common.welcome');
   const avatarUrl = user?.user_metadata?.avatar_url;
 
   const handleSignOut = async () => {
@@ -62,35 +68,50 @@ export function Header() {
 
           {/* Premium Desktop Navigation */}
           <nav className="hidden lg:flex items-center gap-8">
-            {['Matches', 'Groups', 'Tableau', 'Chat'].map((item) => (
+            {['matches', 'groups', 'tableau', 'chat'].map((key) => (
               <Link
-                key={item}
-                to={item === 'Matches' ? '/' : (item === 'Tableau' ? '/bracket' : `/${item.toLowerCase()}`)}
+                key={key}
+                to={key === 'matches' ? '/' : (key === 'tableau' ? '/bracket' : `/${key.toLowerCase()}`)}
                 className="text-sm font-black text-royal-emerald/70 hover:text-royal-emerald transition-all duration-300 uppercase tracking-widest relative group/nav"
               >
-                {item}
+                {t(`nav.${key}`)}
                 <span className="absolute -bottom-1.5 left-0 w-0 h-0.5 bg-saffron transition-all duration-300 group-hover/nav:w-full rounded-full" />
               </Link>
             ))}
             {isAdmin && (
               <Link to="/admin" className="text-sm font-black text-star-red hover:opacity-80 transition-all duration-300 uppercase tracking-widest">
-                Admin
+                {t('nav.admin')}
               </Link>
             )}
           </nav>
 
           {/* Premium Actions */}
           <div className="hidden md:flex items-center gap-5">
-            {/* Translation Picker - Simplified to FR */}
-            <button className="p-2 text-royal-emerald/60 hover:text-royal-emerald transition-colors relative group/lang">
-              <Languages className="w-5 h-5" />
-              <div className="absolute top-full right-0 mt-2 bg-white/90 backdrop-blur-xl border border-royal-emerald/10 rounded-xl py-2 px-3 shadow-xl opacity-0 scale-95 group-hover/lang:opacity-100 group-hover/lang:scale-100 transition-all pointer-events-none">
-                <span className="text-[10px] font-black text-royal-emerald/40 uppercase tracking-widest block whitespace-nowrap">Langue</span>
-                <div className="mt-1 flex flex-col gap-1">
-                  <button className="text-[11px] font-bold text-saffron text-left uppercase">Français</button>
+            {/* Translation Picker */}
+            <div className="relative group/lang">
+              <button className="p-2 text-royal-emerald/60 hover:text-royal-emerald transition-colors">
+                <Languages className="w-5 h-5" />
+              </button>
+              <div className="absolute top-full right-0 mt-2 bg-white/95 backdrop-blur-xl border border-royal-emerald/10 rounded-xl py-2 px-3 shadow-xl opacity-0 scale-95 group-hover/lang:opacity-100 group-hover/lang:scale-100 transition-all pointer-events-none group-hover/lang:pointer-events-auto z-50">
+                <span className="text-[10px] font-black text-royal-emerald/40 uppercase tracking-widest block whitespace-nowrap mb-2">{t('common.language')}</span>
+                <div className="flex flex-col gap-1.5 min-w-[100px]">
+                  <button
+                    onClick={() => changeLanguage('fr')}
+                    className={`text-[11px] font-bold uppercase transition-colors text-left flex items-center justify-between ${i18n.language === 'fr' ? 'text-saffron' : 'text-royal-emerald/60 hover:text-royal-emerald'}`}
+                  >
+                    Français
+                    {i18n.language === 'fr' && <span className="w-1 h-1 bg-saffron rounded-full ml-2" />}
+                  </button>
+                  <button
+                    onClick={() => changeLanguage('en')}
+                    className={`text-[11px] font-bold uppercase transition-colors text-left flex items-center justify-between ${i18n.language.startsWith('en') ? 'text-saffron' : 'text-royal-emerald/60 hover:text-royal-emerald'}`}
+                  >
+                    English
+                    {i18n.language.startsWith('en') && <span className="w-1 h-1 bg-saffron rounded-full ml-2" />}
+                  </button>
                 </div>
               </div>
-            </button>
+            </div>
 
             {user ? (
               <div className="flex items-center">
@@ -111,14 +132,14 @@ export function Header() {
                   </DropdownMenuTrigger>
                   <DropdownMenuContent className="w-56 bg-white/95 backdrop-blur-2xl border-royal-emerald/10 rounded-2xl shadow-2xl p-2 mt-2">
                     <DropdownMenuLabel className="font-royal text-[10px] text-royal-emerald/40 uppercase tracking-[0.2em] px-3 pb-1">
-                      Membre Élite
+                      {t('nav.profile')}
                     </DropdownMenuLabel>
                     <DropdownMenuItem
                       onClick={() => navigate('/profile-setup')}
                       className="rounded-xl focus:bg-royal-emerald/5 text-royal-emerald font-bold uppercase text-[10px] cursor-pointer"
                     >
                       <User className="w-4 h-4 mr-2 opacity-60" />
-                      Mon Profil
+                      {t('nav.profile')}
                     </DropdownMenuItem>
                     {isAdmin && (
                       <DropdownMenuItem
@@ -135,7 +156,7 @@ export function Header() {
                       className="rounded-xl focus:bg-star-red/5 text-star-red font-bold uppercase text-[10px] cursor-pointer"
                     >
                       <LogOut className="w-4 h-4 mr-2 opacity-60" />
-                      Déconnexion
+                      {t('nav.logout')}
                     </DropdownMenuItem>
                   </DropdownMenuContent>
                 </DropdownMenu>
@@ -147,13 +168,13 @@ export function Header() {
                   onClick={() => navigate('/auth')}
                   className="text-sm font-black text-royal-emerald/80 hover:text-royal-emerald uppercase tracking-widest px-4 py-2 transition-all"
                 >
-                  Connexion
+                  {t('nav.signin')}
                 </button>
                 <Button
                   onClick={() => navigate('/auth?mode=signup')}
                   className="btn-royal shadow-royal-emerald/20"
                 >
-                  S'inscrire
+                  {t('nav.signup')}
                 </Button>
               </div>
             )}
@@ -172,14 +193,14 @@ export function Header() {
         {mobileMenuOpen && (
           <div className="lg:hidden py-6 border-t border-royal-emerald/5 bg-white/20 backdrop-blur-3xl animate-in slide-in-from-top duration-500">
             <nav className="flex flex-col gap-3 px-6">
-              {['Matches', 'Groups', 'Tableau', 'Chat'].map((item) => (
+              {['matches', 'groups', 'tableau', 'chat'].map((key) => (
                 <Link
-                  key={item}
-                  to={item === 'Matches' ? '/' : (item === 'Tableau' ? '/bracket' : `/${item.toLowerCase()}`)}
+                  key={key}
+                  to={key === 'matches' ? '/' : (key === 'tableau' ? '/bracket' : `/${key.toLowerCase()}`)}
                   className="px-6 py-3 text-sm font-black text-royal-emerald/80 hover:text-royal-emerald hover:bg-white/40 rounded-2xl transition-all uppercase tracking-widest"
                   onClick={() => setMobileMenuOpen(false)}
                 >
-                  {item}
+                  {t(`nav.${key}`)}
                 </Link>
               ))}
               {isAdmin && (
@@ -188,7 +209,7 @@ export function Header() {
                   className="px-6 py-3 text-sm font-black text-star-red bg-star-red/5 hover:bg-star-red/10 rounded-2xl transition-all text-left uppercase tracking-widest"
                   onClick={() => setMobileMenuOpen(false)}
                 >
-                  Admin Console
+                  {t('nav.admin')}
                 </Link>
               )}
               <div className="h-px bg-royal-emerald/5 my-2" />
@@ -203,7 +224,7 @@ export function Header() {
                     </Avatar>
                     <div className="flex flex-col">
                       <span className="text-sm font-black text-royal-emerald uppercase tracking-widest leading-none mb-1">{fullName}</span>
-                      <span className="text-[10px] font-bold text-royal-emerald/40 uppercase tracking-[0.2em]">Member Elite</span>
+                      <span className="text-[10px] font-bold text-royal-emerald/40 uppercase tracking-[0.2em]">{t('nav.profile')}</span>
                     </div>
                   </div>
                   <Link
@@ -211,7 +232,7 @@ export function Header() {
                     className="px-6 py-3 text-sm font-black text-royal-emerald/80 hover:text-royal-emerald hover:bg-white/40 rounded-2xl transition-all uppercase tracking-widest"
                     onClick={() => setMobileMenuOpen(false)}
                   >
-                    Mon Profil
+                    {t('nav.profile')}
                   </Link>
                   <button
                     onClick={() => {
@@ -220,7 +241,7 @@ export function Header() {
                     }}
                     className="px-6 py-3 text-sm font-black text-star-red bg-star-red/5 rounded-2xl transition-all text-left uppercase tracking-widest"
                   >
-                    Déconnexion
+                    {t('nav.logout')}
                   </button>
                 </div>
               ) : (
@@ -230,7 +251,7 @@ export function Header() {
                     className="px-6 py-3 text-sm font-black text-royal-emerald/80 bg-white/40 rounded-2xl transition-all text-center uppercase tracking-widest"
                     onClick={() => setMobileMenuOpen(false)}
                   >
-                    Connexion
+                    {t('nav.signin')}
                   </Link>
                   <Button
                     onClick={() => {
@@ -239,18 +260,28 @@ export function Header() {
                     }}
                     className="btn-royal w-full py-6 text-base"
                   >
-                    Commencer
+                    {t('nav.signup')}
                   </Button>
                 </div>
               )}
               {/* Mobile Translation Picker */}
               <div className="mt-4 px-6 flex items-center justify-between border-t border-royal-emerald/5 pt-4">
-                <span className="text-[10px] font-black text-royal-emerald/40 uppercase tracking-widest">Langue</span>
+                <span className="text-[10px] font-black text-royal-emerald/40 uppercase tracking-widest">{t('common.language')}</span>
                 <div className="flex gap-4">
-                  <button className="text-[11px] font-bold text-saffron uppercase">FR</button>
+                  <button
+                    onClick={() => changeLanguage('fr')}
+                    className={`text-[11px] font-bold uppercase ${i18n.language === 'fr' ? 'text-saffron' : 'text-royal-emerald hover:text-saffron'}`}
+                  >
+                    FR
+                  </button>
+                  <button
+                    onClick={() => changeLanguage('en')}
+                    className={`text-[11px] font-bold uppercase ${i18n.language.startsWith('en') ? 'text-saffron' : 'text-royal-emerald hover:text-saffron'}`}
+                  >
+                    EN
+                  </button>
                 </div>
               </div>
-
             </nav>
           </div>
         )}
