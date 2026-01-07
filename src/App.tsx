@@ -15,6 +15,7 @@ import Bracket from "./pages/Bracket";
 import Admin from "./pages/Admin";
 import Chat from "./pages/Chat";
 import Portfolios from "./pages/Portfolios";
+import ProfileSetup from "./pages/ProfileSetup";
 import NotFound from "./pages/NotFound";
 import AvenirBall from "./components/AvenirBall";
 import { Footer } from "./components/Footer";
@@ -40,6 +41,7 @@ const App = () => (
             <Routes>
               <Route path="/" element={<Index />} />
               <Route path="/auth" element={<Auth />} />
+              <Route path="/profile-setup" element={<ProfileSetup />} />
               <Route path="/groups" element={<Groups />} />
               <Route path="/bracket" element={<Bracket />} />
               <Route path="/chat" element={<Chat />} />
@@ -54,5 +56,6 @@ const App = () => (
     </AuthProvider>
   </QueryClientProvider>
 );
+
 
 export default App;

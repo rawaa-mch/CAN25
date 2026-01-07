@@ -75,8 +75,9 @@ export default function Auth() {
         toast.success(isSignUp ? 'Account created successfully!' : 'Welcome!', {
           icon: <Sparkles className="w-4 h-4 text-saffron" />
         });
-        navigate('/');
+        navigate(isSignUp ? '/profile-setup' : '/');
       }
+
     } catch (err) {
       toast.error('An unexpected error occurred', {
         icon: <Shield className="w-4 h-4 text-star-red" />
