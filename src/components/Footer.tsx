@@ -20,6 +20,7 @@ export function Footer() {
   const socialLinks = [
     { icon: FaGithub, link: "https://github.com/ayaasrir26/CanProjet", label: "GitHub" },
     { icon: FaInstagram, link: "https://www.instagram.com/cangoal25/?utm_source=qr&igsh=MTE1NXA4b3YzZWNjdQ%3D%3D#", label: "Instagram" },
+
   ];
 
   return (
@@ -134,14 +135,11 @@ export function Footer() {
             <span className="text-sm">🇲🇦</span>
           </div>
         </div>
+      
+ 
       </div>
     </footer>
   );
 }
-      ©CAN 2025 — All rights reserved
-        <span className="mx-2">•</span>
-        Developed with ❤️ in Morocco 🇲🇦
-      </div>
-    </footer>
-  );
-}
+      
+
