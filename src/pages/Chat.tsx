@@ -61,7 +61,34 @@ const Chat = () => {
   const [localUserName, setLocalUserName] = useState("");
   const [profile, setProfile] = useState<any>(null);
   const [isFormOpen, setIsFormOpen] = useState(false);
+  // Fetch user reactions
+  const { data: userReactions = { likes: [], dislikes: [] } } = useQuery({
+    queryKey: ["user_reactions", user?.id],
+    queryFn: async () => {
+      if (!user || !isSupabaseConfigured) return { likes: [], dislikes: [] };
+
+      const [likesResponse, dislikesResponse] = await Promise.all([
+        supabase.from("chat_likes").select("post_id").eq("user_id", user.id),
+        supabase.from("chat_dislikes").select("post_id").eq("user_id", user.id)
+      ]);
+
+      return {
+        likes: likesResponse.data?.map(l => l.post_id) || [],
+        dislikes: dislikesResponse.data?.map(d => d.post_id) || []
+      };
+    },
+    enabled: !!user && isSupabaseConfigured,
+  });
+
   const [localReactions, setLocalReactions] = useState<Record<string, 'like' | 'dislike' | null>>({});
+
+  // Merge server and local reactions for display
+  const getReaction = (postId: string) => {
+    if (localReactions[postId] !== undefined) return localReactions[postId];
+    if (userReactions.likes.includes(postId)) return 'like';
+    if (userReactions.dislikes.includes(postId)) return 'dislike';
+    return null;
+  };
   const [localPosts, setLocalPosts] = useState<Post[]>(() => {
     // Load posts from localStorage on initial render
     const saved = localStorage.getItem('chat_local_posts');
@@ -102,12 +129,93 @@ const Chat = () => {
     localStorage.setItem('chat_local_posts', JSON.stringify(localPosts));
   }, [localPosts]);
 
+  const reactionMutation = useMutation({
+    mutationFn: async ({ postId, type }: { postId: string, type: 'like' | 'dislike' }) => {
+      if (!isSupabaseConfigured || !user) {
+        // Fallback for demo/unauth
+        setLocalReactions(prev => {
+          const current = prev[postId];
+          if (current === type) return { ...prev, [postId]: null };
+          return { ...prev, [postId]: type };
+        });
+
+        // Also update the local post count simulation
+        setLocalPosts(prev => prev.map(p => {
+          if (p.id === postId) {
+            let likes = p.likes;
+            let dislikes = p.dislikes;
+            const currentReaction = localReactions[postId];
+
+            // Remove previous reaction effect
+            if (currentReaction === 'like') likes--;
+            if (currentReaction === 'dislike') dislikes--;
+
+            // Add new reaction effect (if not toggling off)
+            const isTogglingOff = currentReaction === type;
+            if (!isTogglingOff) {
+              if (type === 'like') likes++;
+              if (type === 'dislike') dislikes++;
+            }
+            return { ...p, likes, dislikes };
+          }
+          return p;
+        }));
+        return;
+      }
+
+      const currentReaction = getReaction(postId);
+      const isRemoving = currentReaction === type;
+
+      // 1. Remove existing reaction if any
+      if (currentReaction === 'like') {
+        await supabase.from("chat_likes").delete().eq("post_id", postId).eq("user_id", user.id);
+      } else if (currentReaction === 'dislike') {
+        await supabase.from("chat_dislikes").delete().eq("post_id", postId).eq("user_id", user.id);
+      }
+
+      // 2. Add new reaction if not just removing
+      if (!isRemoving) {
+        if (type === 'like') {
+          await supabase.from("chat_likes").insert({ post_id: postId, user_id: user.id, user_name: activeUserName });
+        } else {
+          await supabase.from("chat_dislikes").insert({ post_id: postId, user_id: user.id, user_name: activeUserName });
+        }
+      }
+    },
+    onMutate: async ({ postId, type }) => {
+      // Optimistic update
+      await queryClient.cancelQueries({ queryKey: ["user_reactions", user?.id] });
+      await queryClient.cancelQueries({ queryKey: ["chat_posts"] });
+
+      const previousReactions = queryClient.getQueryData(["user_reactions", user?.id]);
+      const currentReaction = getReaction(postId);
+
+      // Update UI state immediately
+      setLocalReactions(prev => {
+        if (currentReaction === type) return { ...prev, [postId]: null };
+        return { ...prev, [postId]: type };
+      });
+
+      return { previousReactions };
+    },
+    onSettled: () => {
+      queryClient.invalidateQueries({ queryKey: ["user_reactions"] });
+      queryClient.invalidateQueries({ queryKey: ["chat_posts"] });
+    },
+    onError: (err, newTodo, context: any) => {
+      toast.error("Failed to update reaction");
+      if (context?.previousReactions) {
+        // We can't easily revert the complex merged state, but invalidating will fix it
+      }
+    }
+  });
+
   const handleReaction = (postId: string, type: 'like' | 'dislike') => {
-    setLocalReactions(prev => {
-      const current = prev[postId];
-      if (current === type) return { ...prev, [postId]: null };
-      return { ...prev, [postId]: type };
-    });
+    if (!user && isSupabaseConfigured) {
+      toast.error(t('auth.login_required') || "Please login to react");
+      return;
+    }
+    reactionMutation.mutate({ postId, type });
   };
 
   useEffect(() => {
@@ -128,6 +236,49 @@ const Chat = () => {
     }
     setLocalUserName(storedName);
   }, []);
+
+  // Subscribe to real-time changes
+  useEffect(() => {
+    if (!isSupabaseConfigured) return;
+
+    const channel = supabase
+      .channel('public:chat_changes')
+      .on(
+        'postgres_changes',
+        { event: '*', schema: 'public', table: 'chat_posts' },
+        () => {
+          queryClient.invalidateQueries({ queryKey: ["chat_posts"] });
+        }
+      )
+      .on(
+        'postgres_changes',
+        { event: '*', schema: 'public', table: 'chat_comments' },
+        () => {
+          queryClient.invalidateQueries({ queryKey: ["chat_posts"] });
+        }
+      )
+      .on(
+        'postgres_changes',
+        { event: '*', schema: 'public', table: 'chat_likes' },
+        () => {
+          queryClient.invalidateQueries({ queryKey: ["chat_posts"] });
+          queryClient.invalidateQueries({ queryKey: ["user_reactions"] });
+        }
+      )
+      .on(
+        'postgres_changes',
+        { event: '*', schema: 'public', table: 'chat_dislikes' },
+        () => {
+          queryClient.invalidateQueries({ queryKey: ["chat_posts"] });
+          queryClient.invalidateQueries({ queryKey: ["user_reactions"] });
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [queryClient]);
 
   const activeUserName = user ? (profile?.full_name || user.email?.split('@')[0] || "Anonymous") : localUserName;
 
@@ -515,21 +666,21 @@ const Chat = () => {
                           <button
                             onClick={() => handleReaction(post.id, 'like')}
                             className={`flex items-center gap-1.5 text-xs font-bold transition-colors
-                              ${localReactions[post.id] === 'like' ? 'text-royal-emerald bg-royal-emerald/10' : 'text-slate-400 hover:text-royal-emerald hover:bg-slate-50'}
+                              ${getReaction(post.id) === 'like' ? 'text-royal-emerald bg-royal-emerald/10' : 'text-slate-400 hover:text-royal-emerald hover:bg-slate-50'}
                               rounded-md px-2 py-1`}
                           >
-                            <Heart className={`w-4 h-4 ${localReactions[post.id] === 'like' ? 'fill-current' : ''}`} />
-                            {post.likes + (localReactions[post.id] === 'like' ? 1 : 0)}
+                            <Heart className={`w-4 h-4 ${getReaction(post.id) === 'like' ? 'fill-current' : ''}`} />
+                            {post.likes}
                           </button>
 
                           <button
                             onClick={() => handleReaction(post.id, 'dislike')}
                             className={`flex items-center gap-1.5 text-xs font-bold transition-colors
-                              ${localReactions[post.id] === 'dislike' ? 'text-red-500 bg-red-500/10' : 'text-slate-400 hover:text-red-500 hover:bg-slate-50'}
+                              ${getReaction(post.id) === 'dislike' ? 'text-red-500 bg-red-500/10' : 'text-slate-400 hover:text-red-500 hover:bg-slate-50'}
                               rounded-md px-2 py-1`}
                           >
                             <ThumbsDown className="w-4 h-4" />
-                            {post.dislikes + (localReactions[post.id] === 'dislike' ? 1 : 0)}
+                            {post.dislikes}
                           </button>
 
                           <button
