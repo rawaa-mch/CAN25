@@ -1,13 +1,26 @@
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '@/lib/auth';
 import { Button } from '@/components/ui/button';
-import { Trophy, LogOut, User, LayoutDashboard, Menu, X } from 'lucide-react';
+import { Trophy, LogOut, User, LayoutDashboard, Menu, X, Languages, ChevronDown } from 'lucide-react';
 import { useState } from 'react';
+import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 export function Header() {
   const { user, isAdmin, signOut } = useAuth();
   const navigate = useNavigate();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+
+  // Get user info from metadata (works for both real Supabase and Demo Auth)
+  const fullName = user?.user_metadata?.full_name || user?.email?.split('@')[0] || 'Member';
+  const avatarUrl = user?.user_metadata?.avatar_url;
 
   const handleSignOut = async () => {
     await signOut();
@@ -67,24 +80,70 @@ export function Header() {
           </nav>
 
           {/* Premium Actions */}
-          <div className="hidden md:flex items-center gap-4">
+          <div className="hidden md:flex items-center gap-5">
+            {/* Translation Picker */}
+            <button className="p-2 text-royal-emerald/60 hover:text-royal-emerald transition-colors relative group/lang">
+              <Languages className="w-5 h-5" />
+              <div className="absolute top-full right-0 mt-2 bg-white/90 backdrop-blur-xl border border-royal-emerald/10 rounded-xl py-2 px-3 shadow-xl opacity-0 scale-95 group-hover/lang:opacity-100 group-hover/lang:scale-100 transition-all pointer-events-none">
+                <span className="text-[10px] font-black text-royal-emerald/40 uppercase tracking-widest block whitespace-nowrap">Choose Language</span>
+                <div className="mt-1 flex flex-col gap-1">
+                  <button className="text-[11px] font-bold text-royal-emerald hover:text-saffron text-left uppercase">Français</button>
+                  <button className="text-[11px] font-bold text-royal-emerald hover:text-saffron text-left uppercase">العربية</button>
+                  <button className="text-[11px] font-bold text-royal-emerald hover:text-saffron text-left uppercase">English</button>
+                </div>
+              </div>
+            </button>
+
             {user ? (
-              <div className="flex items-center gap-2">
-                {isAdmin && (
-                  <Button variant="ghost" size="sm" onClick={() => navigate('/admin')} className="text-royal-emerald font-bold">
-                    <LayoutDashboard className="w-4 h-4 mr-2" />
-                    Console
-                  </Button>
-                )}
-                <Button
-                  onClick={handleSignOut}
-                  className="bg-star-red/10 text-star-red hover:bg-star-red hover:text-white rounded-xl border border-star-red/20 font-bold transition-all"
-                >
-                  <LogOut className="w-4 h-4 mr-2" />
-                  Logout
-                </Button>
+              <div className="flex items-center">
+                <DropdownMenu>
+                  <DropdownMenuTrigger className="outline-none">
+                    <div className="flex items-center gap-3 p-1 pl-3 bg-royal-emerald/5 hover:bg-royal-emerald/10 rounded-full border border-royal-emerald/5 transition-all group/profile">
+                      <span className="text-xs font-black text-royal-emerald uppercase tracking-widest hidden lg:block">
+                        {fullName.split(' ')[0]}
+                      </span>
+                      <Avatar className="w-9 h-9 border-2 border-white ring-2 ring-saffron/20 transition-transform group-hover/profile:scale-105">
+                        <AvatarImage src={avatarUrl || ""} className="object-cover" />
+                        <AvatarFallback className="bg-gradient-saffron text-royal-emerald font-black text-xs uppercase">
+                          {fullName.charAt(0)}
+                        </AvatarFallback>
+                      </Avatar>
+                      <ChevronDown className="w-4 h-4 text-royal-emerald/40 mr-1 group-hover/profile:text-royal-emerald transition-colors" />
+                    </div>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent className="w-56 bg-white/95 backdrop-blur-2xl border-royal-emerald/10 rounded-2xl shadow-2xl p-2 mt-2">
+                    <DropdownMenuLabel className="font-royal text-[10px] text-royal-emerald/40 uppercase tracking-[0.2em] px-3 pb-1">
+                      Member Elite
+                    </DropdownMenuLabel>
+                    <DropdownMenuItem
+                      onClick={() => navigate('/profile-setup')}
+                      className="rounded-xl focus:bg-royal-emerald/5 text-royal-emerald font-bold uppercase text-[10px] cursor-pointer"
+                    >
+                      <User className="w-4 h-4 mr-2 opacity-60" />
+                      Mon Profil
+                    </DropdownMenuItem>
+                    {isAdmin && (
+                      <DropdownMenuItem
+                        onClick={() => navigate('/admin')}
+                        className="rounded-xl focus:bg-royal-emerald/5 text-star-red font-bold uppercase text-[10px] cursor-pointer"
+                      >
+                        <LayoutDashboard className="w-4 h-4 mr-2 opacity-60" />
+                        Administration
+                      </DropdownMenuItem>
+                    )}
+                    <DropdownMenuSeparator className="bg-royal-emerald/5 my-1" />
+                    <DropdownMenuItem
+                      onClick={handleSignOut}
+                      className="rounded-xl focus:bg-star-red/5 text-star-red font-bold uppercase text-[10px] cursor-pointer"
+                    >
+                      <LogOut className="w-4 h-4 mr-2 opacity-60" />
+                      Déconnexion
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
               </div>
             ) : (
+
               <div className="flex items-center gap-3">
                 <button
                   onClick={() => navigate('/auth')}
@@ -136,15 +195,36 @@ export function Header() {
               )}
               <div className="h-px bg-royal-emerald/5 my-2" />
               {user ? (
-                <button
-                  onClick={() => {
-                    handleSignOut();
-                    setMobileMenuOpen(false);
-                  }}
-                  className="px-6 py-3 text-sm font-black text-star-red bg-star-red/5 rounded-2xl transition-all text-left uppercase tracking-widest"
-                >
-                  Logout
-                </button>
+                <div className="flex flex-col gap-2">
+                  <div className="flex items-center gap-4 px-6 py-4 bg-royal-emerald/5 rounded-2xl mx-1">
+                    <Avatar className="w-12 h-12 border-2 border-white shadow-sm">
+                      <AvatarImage src={avatarUrl || ""} className="object-cover" />
+                      <AvatarFallback className="bg-gradient-saffron text-royal-emerald font-black">
+                        {fullName.charAt(0)}
+                      </AvatarFallback>
+                    </Avatar>
+                    <div className="flex flex-col">
+                      <span className="text-sm font-black text-royal-emerald uppercase tracking-widest leading-none mb-1">{fullName}</span>
+                      <span className="text-[10px] font-bold text-royal-emerald/40 uppercase tracking-[0.2em]">Member Elite</span>
+                    </div>
+                  </div>
+                  <Link
+                    to="/profile-setup"
+                    className="px-6 py-3 text-sm font-black text-royal-emerald/80 hover:text-royal-emerald hover:bg-white/40 rounded-2xl transition-all uppercase tracking-widest"
+                    onClick={() => setMobileMenuOpen(false)}
+                  >
+                    Mon Profil
+                  </Link>
+                  <button
+                    onClick={() => {
+                      handleSignOut();
+                      setMobileMenuOpen(false);
+                    }}
+                    className="px-6 py-3 text-sm font-black text-star-red bg-star-red/5 rounded-2xl transition-all text-left uppercase tracking-widest"
+                  >
+                    Déconnexion
+                  </button>
+                </div>
               ) : (
                 <div className="flex flex-col gap-3">
                   <Link
@@ -165,6 +245,16 @@ export function Header() {
                   </Button>
                 </div>
               )}
+              {/* Mobile Translation Picker */}
+              <div className="mt-4 px-6 flex items-center justify-between border-t border-royal-emerald/5 pt-4">
+                <span className="text-[10px] font-black text-royal-emerald/40 uppercase tracking-widest">Langue</span>
+                <div className="flex gap-4">
+                  <button className="text-[11px] font-bold text-royal-emerald hover:text-saffron uppercase">FR</button>
+                  <button className="text-[11px] font-bold text-royal-emerald hover:text-saffron uppercase">AR</button>
+                  <button className="text-[11px] font-bold text-royal-emerald hover:text-saffron uppercase">EN</button>
+                </div>
+              </div>
+
             </nav>
           </div>
         )}
