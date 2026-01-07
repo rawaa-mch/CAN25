@@ -128,7 +128,7 @@ const Chat = () => {
   }, [localPosts]);
 
   const reactionMutation = useMutation({
-    mutationFn: async ({ postId, type }: { postId: string, type: 'like' | 'dislike' }) => {
+    mutationFn: async ({ postId, type, currentReaction }: { postId: string, type: 'like' | 'dislike', currentReaction: 'like' | 'dislike' | null }) => {
       if (!isSupabaseConfigured || !user) {
         // Fallback for demo/unauth
         setLocalReactions(prev => {
@@ -142,7 +142,6 @@ const Chat = () => {
           if (p.id === postId) {
             let likes = p.likes;
             let dislikes = p.dislikes;
-            const currentReaction = localReactions[postId];
 
             // Remove previous reaction effect
             if (currentReaction === 'like') likes--;
@@ -154,14 +153,13 @@ const Chat = () => {
               if (type === 'like') likes++;
               if (type === 'dislike') dislikes++;
             }
-            return { ...p, likes, dislikes };
+            return { ...p, likes: Math.max(0, likes), dislikes: Math.max(0, dislikes) };
           }
           return p;
         }));
         return;
       }
 
-      const currentReaction = getReaction(postId);
       const isRemoving = currentReaction === type;
 
       // 1. Remove existing reaction if any
@@ -180,21 +178,43 @@ const Chat = () => {
         }
       }
     },
-    onMutate: async ({ postId, type }) => {
+    onMutate: async ({ postId, type, currentReaction }) => {
       // Optimistic update
       await queryClient.cancelQueries({ queryKey: ["user_reactions", user?.id] });
       await queryClient.cancelQueries({ queryKey: ["chat_posts"] });
 
       const previousReactions = queryClient.getQueryData(["user_reactions", user?.id]);
-      const currentReaction = getReaction(postId);
+      const previousPosts = queryClient.getQueryData(["chat_posts"]);
 
-      // Update UI state immediately
+      // Update UI state immediately (Local React State)
       setLocalReactions(prev => {
         if (currentReaction === type) return { ...prev, [postId]: null };
         return { ...prev, [postId]: type };
       });
 
-      return { previousReactions };
+      // Update Query Cache for Posts (Counter)
+      queryClient.setQueryData(["chat_posts"], (oldPosts: Post[] | undefined) => {
+        if (!oldPosts) return [];
+        return oldPosts.map(p => {
+          if (p.id === postId) {
+            let likes = p.likes;
+            let dislikes = p.dislikes;
+
+            if (currentReaction === 'like') likes--;
+            if (currentReaction === 'dislike') dislikes--;
+
+            if (currentReaction !== type) {
+              if (type === 'like') likes++;
+              if (type === 'dislike') dislikes++;
+            }
+
+            return { ...p, likes: Math.max(0, likes), dislikes: Math.max(0, dislikes) };
+          }
+          return p;
+        });
+      });
+
+      return { previousReactions, previousPosts };
     },
     onSettled: () => {
       queryClient.invalidateQueries({ queryKey: ["user_reactions"] });
@@ -203,7 +223,10 @@ const Chat = () => {
     onError: (err, newTodo, context: any) => {
       toast.error("Failed to update reaction");
       if (context?.previousReactions) {
-        // We can't easily revert the complex merged state, but invalidating will fix it
+        queryClient.setQueryData(["user_reactions", user?.id], context.previousReactions);
+      }
+      if (context?.previousPosts) {
+        queryClient.setQueryData(["chat_posts"], context.previousPosts);
       }
     }
   });
@@ -213,7 +236,9 @@ const Chat = () => {
       toast.error(t('auth.login_required') || "Please login to react");
       return;
     }
-    reactionMutation.mutate({ postId, type });
+    // Calculate current reaction HERE to be stable
+    const currentReaction = getReaction(postId);
+    reactionMutation.mutate({ postId, type, currentReaction });
   };
 
   useEffect(() => {
