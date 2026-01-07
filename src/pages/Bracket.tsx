@@ -17,6 +17,8 @@ import html2canvas from "html2canvas";
 import { useToast } from "@/hooks/use-toast";
 import { useState } from "react";
 
+import { FALLBACK_TEAMS } from "@/data/fallbackData";
+
 const Bracket = () => {
   const predictionContext = useContext(PredictionContext);
   const { user } = useAuth();
@@ -171,7 +173,7 @@ const Bracket = () => {
     setIsShareOpen(false);
   };
 
-  const { data: teams, isLoading } = useQuery({
+  const { data: teams, isLoading, error: queryError } = useQuery({
     queryKey: ["teams"],
     queryFn: async () => {
       const { data, error } = await supabase
@@ -181,7 +183,11 @@ const Bracket = () => {
       if (error) throw error;
       return data;
     },
+    retry: 1,
   });
+
+  const displayTeams = queryError || (!isLoading && (!teams || teams.length === 0)) ? FALLBACK_TEAMS : teams;
+
 
   if (!predictionContext) {
     return (
@@ -356,12 +362,12 @@ const Bracket = () => {
       </section >
 
       {/* Main Bracket Section */}
-      < main ref={bracketRef} className="container mx-auto px-2 md:px-4 py-6 md:py-16" >
+      <main ref={bracketRef} className="container mx-auto px-2 md:px-4 py-6 md:py-16">
         <div className="mb-6 md:mb-8">
           <div className="flex items-center justify-between mb-4 md:mb-6 px-2">
             <h2 className="text-xl md:text-3xl font-bold text-gray-900">Tournament Bracket</h2>
             <div className="text-xs md:text-sm text-gray-500">
-              {teams?.length || 0} teams
+              {displayTeams?.length || 0} teams
             </div>
           </div>
 
@@ -372,7 +378,7 @@ const Bracket = () => {
                 <p className="text-sm md:text-base text-gray-600">Loading tournament data...</p>
               </div>
             </div>
-          ) : teams ? (
+          ) : (
             <>
               {/* Mobile scroll hint */}
               <div className="md:hidden text-center py-3 text-sm text-gray-500 flex items-center justify-center gap-2">
@@ -381,26 +387,12 @@ const Bracket = () => {
                 <span>👉</span>
               </div>
               <div className="bg-white rounded-xl md:rounded-2xl border md:border-2 border-gray-100 p-2 md:p-6 shadow-sm">
-                <TournamentBracket teams={teams} />
+                <TournamentBracket teams={displayTeams || []} />
               </div>
             </>
-          ) : (
-            <Card className="border-2 border-dashed border-gray-200 mx-2">
-              <CardContent className="py-12 md:py-20 text-center">
-                <Target className="w-10 md:w-12 h-10 md:h-12 text-gray-300 mx-auto mb-3 md:mb-4" />
-                <p className="text-sm md:text-base text-gray-500">Failed to load teams data</p>
-                <Button
-                  variant="outline"
-                  className="mt-3 md:mt-4 text-sm"
-                  onClick={() => window.location.reload()}
-                >
-                  Retry
-                </Button>
-              </CardContent>
-            </Card>
           )}
         </div>
-      </main >
+      </main>
 
       {/* Share / Preview Modal */}
       {isShareOpen && (
@@ -433,48 +425,46 @@ const Bracket = () => {
       )}
 
       {/* Prizes Section */}
-      < div className="bg-gradient-to-b from-gray-50 to-white py-6 md:py-16" >
+      <div className="bg-gradient-to-b from-gray-50 to-white py-6 md:py-16">
         <PrizesSection winner={champion} />
-      </div >
+      </div>
 
       {/* Leaderboard */}
-      < div className="py-6 md:py-16" >
+      <div className="py-6 md:py-16">
         <Leaderboard />
-      </div >
+      </div>
 
       {/* Mobile Action Buttons - Non-fixed for better scrolling */}
-      {
-        user && (
-          <div className="md:hidden flex justify-center gap-4 py-6 px-4 bg-gray-50 border-t border-gray-200">
-            <Button
-              className="flex-1 max-w-[160px] h-12 rounded-full bg-primary text-white shadow-lg hover:shadow-xl transition-all duration-300"
-              onClick={savePredictions}
-              disabled={isSaving}
-            >
-              {isSaving ? (
-                <Loader2 className="w-5 h-5 animate-spin mr-2" />
-              ) : (
-                <Save className="w-5 h-5 mr-2" />
-              )}
-              Save
-            </Button>
-            <Button
-              className="flex-1 max-w-[160px] h-12 rounded-full bg-blue-600 text-white shadow-lg hover:shadow-xl transition-all duration-300"
-              onClick={handleDownload}
-              disabled={isCapturing}
-              title="Share or download the bracket diagram"
-            >
-              {isCapturing ? (
-                <Loader2 className="w-5 h-5 animate-spin mr-2" />
-              ) : (
-                <Download className="w-5 h-5 mr-2" />
-              )}
-              {isCapturing ? "Generating..." : "Share"}
-            </Button>
-          </div>
-        )
-      }
-    </div >
+      {user && (
+        <div className="md:hidden flex justify-center gap-4 py-6 px-4 bg-gray-50 border-t border-gray-200">
+          <Button
+            className="flex-1 max-w-[160px] h-12 rounded-full bg-primary text-white shadow-lg hover:shadow-xl transition-all duration-300"
+            onClick={savePredictions}
+            disabled={isSaving}
+          >
+            {isSaving ? (
+              <Loader2 className="w-5 h-5 animate-spin mr-2" />
+            ) : (
+              <Save className="w-5 h-5 mr-2" />
+            )}
+            Save
+          </Button>
+          <Button
+            className="flex-1 max-w-[160px] h-12 rounded-full bg-blue-600 text-white shadow-lg hover:shadow-xl transition-all duration-300"
+            onClick={handleDownload}
+            disabled={isCapturing}
+            title="Share or download the bracket diagram"
+          >
+            {isCapturing ? (
+              <Loader2 className="w-5 h-5 animate-spin mr-2" />
+            ) : (
+              <Download className="w-5 h-5 mr-2" />
+            )}
+            {isCapturing ? "Generating..." : "Share"}
+          </Button>
+        </div>
+      )}
+    </div>
   );
 };
 
