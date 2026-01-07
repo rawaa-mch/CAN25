@@ -65,7 +65,7 @@ export default function ProfileSetup() {
 
             if (error) throw error;
 
-            toast.success("Profile completed! Welcome to the elite.", {
+            toast.success("Profil complété ! Bienvenue parmi l'élite.", {
                 icon: <Sparkles className="w-4 h-4 text-saffron" />
             });
             navigate("/");
@@ -89,10 +89,10 @@ export default function ProfileSetup() {
 
                     <div className="text-center mb-10">
                         <h1 className="font-royal text-4xl text-royal-emerald mb-4 uppercase tracking-tighter">
-                            COMPLETE <span className="text-star-red">YOUR PROFILE</span>
+                            COMPLÉTEZ <span className="text-star-red">VOTRE PROFIL</span>
                         </h1>
                         <p className="text-royal-emerald/60 font-black uppercase tracking-[0.2em] text-[10px] bg-white/10 px-4 py-1.5 rounded-full inline-block">
-                            Welcome to CANGOAL 2025
+                            Bienvenue sur CANGOAL 2025
                         </p>
                     </div>
 
@@ -122,7 +122,7 @@ export default function ProfileSetup() {
                                 </label>
                             </div>
                             <p className="text-[10px] font-black text-royal-emerald/40 uppercase tracking-widest">
-                                Upload your profile picture
+                                Téléchargez votre photo de profil
                             </p>
                         </div>
 
@@ -185,7 +185,7 @@ export default function ProfileSetup() {
                                 <Loader2 className="w-6 h-6 animate-spin" />
                             ) : (
                                 <>
-                                    JOIN THE ELITE
+                                    REJOINDRE L'ÉLITE
                                     <ChevronRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
                                 </>
                             )}
@@ -193,7 +193,7 @@ export default function ProfileSetup() {
                     </form>
 
                     <p className="text-[9px] text-royal-emerald/30 mt-8 text-center font-medium uppercase tracking-[0.3em]">
-                        Step into the history of Moroccan Football
+                        Entrez dans l'histoire du football marocain
                     </p>
                 </div>
             </div>
