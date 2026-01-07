@@ -13,6 +13,8 @@ import {
 } from "lucide-react";
 import { toast } from "sonner";
 import { FALLBACK_TEAMS } from "@/data/fallbackData";
+import { isSupabaseConfigured } from "@/integrations/supabase/client";
+
 
 export default function ProfileSetup() {
     const { user } = useAuth();
@@ -51,16 +53,32 @@ export default function ProfileSetup() {
 
         setLoading(true);
         try {
-            const { error } = await supabase
-                .from("profiles")
-                .update({
-                    full_name: fullName,
-                    avatar_url: avatarUrl,
-                    updated_at: new Date().toISOString()
-                })
-                .eq("user_id", user.id);
+            if (!isSupabaseConfigured) {
+                // Demo mode simulation
+                const demoUser = localStorage.getItem('demo_user');
+                if (demoUser) {
+                    const parsed = JSON.parse(demoUser);
+                    parsed.user_metadata = {
+                        ...parsed.user_metadata,
+                        full_name: fullName,
+                        avatar_url: avatarUrl,
+                        favorite_team: favoriteTeam
+                    };
+                    localStorage.setItem('demo_user', JSON.stringify(parsed));
+                }
+                await new Promise(resolve => setTimeout(resolve, 800)); // Simulate delay
+            } else {
+                const { error } = await supabase
+                    .from("profiles")
+                    .update({
+                        full_name: fullName,
+                        avatar_url: avatarUrl,
+                        updated_at: new Date().toISOString()
+                    })
+                    .eq("user_id", user.id);
 
-            if (error) throw error;
+                if (error) throw error;
+            }
 
             toast.success("Profile completed! Welcome to the elite.", {
                 icon: <Sparkles className="w-4 h-4 text-saffron" />
@@ -151,8 +169,8 @@ export default function ProfileSetup() {
                                             type="button"
                                             onClick={() => setFavoriteTeam(team.name)}
                                             className={`relative p-3 rounded-2xl border transition-all duration-300 group flex flex-col items-center gap-2 ${favoriteTeam === team.name
-                                                    ? 'bg-royal-emerald border-saffron shadow-lg scale-105'
-                                                    : 'bg-white/40 border-royal-emerald/5 hover:border-royal-emerald/20 hover:bg-white/60'
+                                                ? 'bg-royal-emerald border-saffron shadow-lg scale-105'
+                                                : 'bg-white/40 border-royal-emerald/5 hover:border-royal-emerald/20 hover:bg-white/60'
                                                 }`}
                                         >
                                             <img src={team.flag_url} alt={team.name} className="w-8 h-6 object-cover rounded-sm shadow-sm" />
