@@ -10,6 +10,7 @@ interface AuthContextType {
   signUp: (email: string, password: string, fullName: string) => Promise<{ error: Error | null }>;
   signIn: (email: string, password: string) => Promise<{ error: Error | null }>;
   signOut: () => Promise<void>;
+  updateProfile: (data: { full_name?: string; avatar_url?: string; favorite_team?: string }) => Promise<{ error: Error | null }>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -140,8 +141,51 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setIsAdmin(false);
   };
 
+  const updateProfile = async (data: { full_name?: string; avatar_url?: string; favorite_team?: string }) => {
+    if (!isSupabaseConfigured) {
+      // Demo Auth Mode
+      const demoUserStr = localStorage.getItem('demo_user');
+      if (demoUserStr) {
+        const demoUser = JSON.parse(demoUserStr);
+        demoUser.user_metadata = { ...demoUser.user_metadata, ...data };
+        localStorage.setItem('demo_user', JSON.stringify(demoUser));
+        setUser(demoUser);
+        setSession(prev => prev ? { ...prev, user: demoUser } : null);
+      }
+      return { error: null };
+    }
+
+    // Real Supabase Auth Update
+    const { data: updatedUser, error: authError } = await supabase.auth.updateUser({
+      data: data
+    });
+
+    if (authError) return { error: authError };
+
+    // Also update the profiles table for database persistence
+    const { error: profileError } = await supabase
+      .from('profiles')
+      .update({
+        full_name: data.full_name,
+        avatar_url: data.avatar_url,
+        updated_at: new Date().toISOString()
+      })
+      .eq('user_id', user?.id);
+
+    if (profileError) {
+      console.error('Error updating profiles table:', profileError);
+    }
+
+    // Update local state immediately
+    if (updatedUser.user) {
+      setUser(updatedUser.user);
+    }
+
+    return { error: null };
+  };
+
   return (
-    <AuthContext.Provider value={{ user, session, loading, isAdmin, signUp, signIn, signOut }}>
+    <AuthContext.Provider value={{ user, session, loading, isAdmin, signUp, signIn, signOut, updateProfile }}>
       {children}
     </AuthContext.Provider>
   );

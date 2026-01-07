@@ -17,7 +17,7 @@ import { isSupabaseConfigured } from "@/integrations/supabase/client";
 
 
 export default function ProfileSetup() {
-    const { user } = useAuth();
+    const { user, updateProfile } = useAuth();
     const navigate = useNavigate();
     const [loading, setLoading] = useState(false);
     const [fullName, setFullName] = useState("");
@@ -28,6 +28,10 @@ export default function ProfileSetup() {
     useEffect(() => {
         if (!user) {
             navigate("/auth");
+        } else if (user.user_metadata) {
+            setFullName(user.user_metadata.full_name || "");
+            setFavoriteTeam(user.user_metadata.favorite_team || "");
+            setPreviewUrl(user.user_metadata.avatar_url || null);
         }
     }, [user, navigate]);
 
@@ -53,32 +57,13 @@ export default function ProfileSetup() {
 
         setLoading(true);
         try {
-            if (!isSupabaseConfigured) {
-                // Demo mode simulation
-                const demoUser = localStorage.getItem('demo_user');
-                if (demoUser) {
-                    const parsed = JSON.parse(demoUser);
-                    parsed.user_metadata = {
-                        ...parsed.user_metadata,
-                        full_name: fullName,
-                        avatar_url: avatarUrl,
-                        favorite_team: favoriteTeam
-                    };
-                    localStorage.setItem('demo_user', JSON.stringify(parsed));
-                }
-                await new Promise(resolve => setTimeout(resolve, 800)); // Simulate delay
-            } else {
-                const { error } = await supabase
-                    .from("profiles")
-                    .update({
-                        full_name: fullName,
-                        avatar_url: avatarUrl,
-                        updated_at: new Date().toISOString()
-                    })
-                    .eq("user_id", user.id);
+            const { error } = await updateProfile({
+                full_name: fullName,
+                avatar_url: avatarUrl || undefined,
+                favorite_team: favoriteTeam
+            });
 
-                if (error) throw error;
-            }
+            if (error) throw error;
 
             toast.success("Profile completed! Welcome to the elite.", {
                 icon: <Sparkles className="w-4 h-4 text-saffron" />
@@ -90,6 +75,7 @@ export default function ProfileSetup() {
             setLoading(false);
         }
     };
+
 
     return (
         <div className="min-h-screen bg-gradient-royal overflow-hidden relative flex items-center justify-center p-4 py-20">
