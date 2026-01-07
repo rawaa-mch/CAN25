@@ -15,9 +15,9 @@ export function Footer() {
   ];
 
   const teamMembers = [
-    { name: "AYA ASRIR", role: "Developer Web Full Stack" },
-    { name: "RAWÂA M'CHAABAT", role: "Developer  Web Full Stack" },
-    { name: "HASSANIA EL-FALAH", role: "Developer Web Full Stack" },
+    { name: "AYA ASRIR", role: "Developer Web Full Stack", linkedin: "https://www.linkedin.com/in/aya-asrir-94931a375/" },
+    { name: "RAWÂA M'CHAABAT", role: "Developer  Web Full Stack", linkedin: "https://www.linkedin.com/in/rawâa-m-chaabat-4705a2371" },
+    { name: "HASSANIA EL-FALAH", role: "Developer Web Full Stack", linkedin: "https://www.linkedin.com/in/hassania-el-falah-021606363/" },
   ];
 
   const socialLinks = [
@@ -95,8 +95,10 @@ export function Footer() {
             <ul className="space-y-4">
               {teamMembers.map((member) => (
                 <li key={member.name} className="group">
-                  <p className="text-sm font-bold text-gray-300 group-hover:text-green-400 transition-colors">{member.name}</p>
-                  <p className="text-[10px] text-gray-500 uppercase tracking-tighter">{member.role}</p>
+                  <a href={member.linkedin} target="_blank" rel="noopener noreferrer" className="block">
+                    <p className="text-sm font-bold text-gray-300 group-hover:text-green-400 transition-colors">{member.name}</p>
+                    <p className="text-[10px] text-gray-500 uppercase tracking-tighter">{member.role}</p>
+                  </a>
                 </li>
               ))}
             </ul>
