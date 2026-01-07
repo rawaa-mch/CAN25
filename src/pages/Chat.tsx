@@ -39,6 +39,7 @@ interface Post {
 }
 
 import { FALLBACK_POSTS } from "@/data/fallbackData";
+import { isSupabaseConfigured } from "@/integrations/supabase/client";
 
 const Chat = () => {
   const { user } = useAuth();
@@ -52,6 +53,7 @@ const Chat = () => {
   const [profile, setProfile] = useState<any>(null);
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [localReactions, setLocalReactions] = useState<Record<string, 'like' | 'dislike' | null>>({});
+  const [localPosts, setLocalPosts] = useState<Post[]>([]);
 
   const handleReaction = (postId: string, type: 'like' | 'dislike') => {
     setLocalReactions(prev => {
@@ -86,6 +88,7 @@ const Chat = () => {
   const { data: posts, isLoading, error: queryError } = useQuery({
     queryKey: ["chat_posts"],
     queryFn: async () => {
+      if (!isSupabaseConfigured) return [];
       const { data, error } = await supabase
         .from("chat_posts")
         .select("*, chat_comments(*)")
@@ -101,12 +104,35 @@ const Chat = () => {
     retry: 1,
   });
 
-  const displayPosts = queryError || (!isLoading && (!posts || posts.length === 0)) ? FALLBACK_POSTS : posts;
-
+  const displayPosts = queryError || (!isLoading && (!posts || posts.length === 0))
+    ? [...localPosts, ...FALLBACK_POSTS]
+    : [...localPosts, ...(posts || [])];
 
   // Mutations
   const shareMutation = useMutation({
     mutationFn: async () => {
+      if (!isSupabaseConfigured) {
+        // Demo mode: just add to local state
+        if (editingId) {
+          setLocalPosts(prev => prev.map(p => p.id === editingId ? { ...p, title, content, image_url: image } : p));
+        } else {
+          const newPost: Post = {
+            id: 'local-' + Date.now(),
+            title,
+            content,
+            image_url: image || undefined,
+            user_name: activeUserName,
+            user_id: null,
+            likes: 0,
+            dislikes: 0,
+            created_at: new Date().toISOString(),
+            chat_comments: []
+          };
+          setLocalPosts(prev => [newPost, ...prev]);
+        }
+        return;
+      }
+
       if (editingId) {
         const { error } = await supabase.from("chat_posts")
           .update({ title, content, image_url: image, updated_at: new Date().toISOString() })
@@ -124,31 +150,61 @@ const Chat = () => {
       }
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["chat_posts"] });
+      if (isSupabaseConfigured) {
+        queryClient.invalidateQueries({ queryKey: ["chat_posts"] });
+      }
+      const isDemo = !isSupabaseConfigured;
       setTitle("");
       setContent("");
       setImage(null);
       setEditingId(null);
       setIsFormOpen(false);
-      toast.success(editingId ? "Post edited successfully!" : "Post published successfully!");
+      toast.success(
+        editingId
+          ? (isDemo ? "Post edited locally (Demo Mode)" : "Post edited successfully!")
+          : (isDemo ? "Post published locally (Demo Mode)" : "Post published successfully!")
+      );
     },
     onError: (err: any) => toast.error("Error: " + (err.message || "Something went wrong.")),
   });
 
   const deleteMutation = useMutation({
     mutationFn: async (id: string) => {
+      if (!isSupabaseConfigured || id.startsWith('local-')) {
+        setLocalPosts(prev => prev.filter(p => p.id !== id));
+        return;
+      }
       const { error } = await supabase.from("chat_posts").delete().eq("id", id);
       if (error) throw error;
     },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["chat_posts"] });
+    onSuccess: (_, id) => {
+      if (isSupabaseConfigured && !id.startsWith('local-')) {
+        queryClient.invalidateQueries({ queryKey: ["chat_posts"] });
+      }
       toast.success("Post deleted");
     },
     onError: (err: any) => toast.error("Error: " + err.message),
   });
 
+
   const commentMutation = useMutation({
     mutationFn: async ({ postId, text }: { postId: string, text: string }) => {
+      if (!isSupabaseConfigured || postId.startsWith('local-')) {
+        setLocalPosts(prev => prev.map(p => {
+          if (p.id === postId) {
+            const newComment: Comment = {
+              id: 'local-c-' + Date.now(),
+              content: text,
+              user_name: activeUserName,
+              user_id: null,
+              created_at: new Date().toISOString()
+            };
+            return { ...p, chat_comments: [...p.chat_comments, newComment] };
+          }
+          return p;
+        }));
+        return;
+      }
       const { error } = await supabase.from("chat_comments").insert({
         post_id: postId,
         content: text,
@@ -157,9 +213,15 @@ const Chat = () => {
       });
       if (error) throw error;
     },
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["chat_posts"] }),
+    onSuccess: () => {
+      if (isSupabaseConfigured) {
+        queryClient.invalidateQueries({ queryKey: ["chat_posts"] });
+      }
+      toast.success("Comment added!");
+    },
     onError: (err: any) => toast.error("Error: " + err.message),
   });
+
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
