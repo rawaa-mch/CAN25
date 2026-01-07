@@ -49,6 +49,70 @@ export type Database = {
           },
         ]
       }
+      chat_likes: {
+        Row: {
+          created_at: string
+          id: string
+          post_id: string
+          user_id: string
+          user_name: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          post_id: string
+          user_id: string
+          user_name: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          post_id?: string
+          user_id?: string
+          user_name?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "chat_likes_post_id_fkey"
+            columns: ["post_id"]
+            isOneToOne: false
+            referencedRelation: "chat_posts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      chat_dislikes: {
+        Row: {
+          created_at: string
+          id: string
+          post_id: string
+          user_id: string
+          user_name: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          post_id: string
+          user_id: string
+          user_name: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          post_id?: string
+          user_id?: string
+          user_name?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "chat_dislikes_post_id_fkey"
+            columns: ["post_id"]
+            isOneToOne: false
+            referencedRelation: "chat_posts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       chat_posts: {
         Row: {
           content: string
