@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/button';
 
 import { TeamStats } from '@/components/TeamState';
 import { GeneralStats } from '@/components/GeneralStats';
+import { FALLBACK_TEAMS } from '@/data/fallbackData';
 
 
 export default function Groups() {
@@ -30,11 +31,15 @@ export default function Groups() {
     retry: 1, // Don't retry too many times
   });
 
-  const groupedTeams = teams?.reduce((acc, team) => {
+  // Use fallback data if there's an error or no data returned
+  const displayTeams = queryError || (!isLoading && (!teams || teams.length === 0)) ? FALLBACK_TEAMS : teams;
+
+  const groupedTeams = displayTeams?.reduce((acc, team: any) => {
     if (!acc[team.group_name]) acc[team.group_name] = [];
     acc[team.group_name].push(team);
     return acc;
-  }, {} as Record<string, typeof teams>);
+  }, {} as Record<string, any[]>);
+
 
   return (
     <div className="min-h-screen bg-transparent">
@@ -50,30 +55,6 @@ export default function Groups() {
             <Loader2 className="w-8 h-8 animate-spin text-primary" />
             <p className="text-sm text-muted-foreground animate-pulse">Loading data...</p>
           </div>
-        ) : queryError ? (
-          <div className="flex flex-col items-center justify-center py-20 gap-4 bg-white/50 backdrop-blur-sm rounded-3xl border border-star-red/20 shadow-xl">
-            <div className="p-4 bg-star-red/10 rounded-full">
-              <Shield className="w-8 h-8 text-star-red" />
-            </div>
-            <div className="text-center">
-              <h2 className="text-xl font-bold text-royal-emerald mb-1">Connection error</h2>
-              <p className="text-sm text-muted-foreground max-w-md">
-                We couldn't load the tournament data. Please check your connection or database settings.
-              </p>
-              {queryError instanceof Error && (
-                <p className="text-[10px] font-mono text-star-red/60 mt-2 bg-black/5 p-2 rounded">
-                  {queryError.message}
-                </p>
-              )}
-            </div>
-            <Button
-              onClick={() => refetch()}
-              variant="outline"
-              className="mt-2 border-royal-emerald/20 text-royal-emerald hover:bg-royal-emerald hover:text-white transition-all"
-            >
-              Retry connection
-            </Button>
-          </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {groupedTeams && Object.entries(groupedTeams).map(([groupName, groupTeams]) => (
@@ -81,13 +62,14 @@ export default function Groups() {
             ))}
           </div>
         )}
-        <br/>
+
+        <br />
         <hr />
-        <br/>
-            <h1 className="text-center font-display text-5xl text-white mb-2">Tournament Overview</h1>
-<GeneralStats/>
+        <br />
+        <h1 className="text-center font-display text-5xl text-white mb-2">Tournament Overview</h1>
+        <GeneralStats />
       </main>
     </div>
-    
+
   );
 }
