@@ -81,15 +81,13 @@ export function Header() {
 
           {/* Premium Actions */}
           <div className="hidden md:flex items-center gap-5">
-            {/* Translation Picker */}
+            {/* Translation Picker - Simplified to FR */}
             <button className="p-2 text-royal-emerald/60 hover:text-royal-emerald transition-colors relative group/lang">
               <Languages className="w-5 h-5" />
               <div className="absolute top-full right-0 mt-2 bg-white/90 backdrop-blur-xl border border-royal-emerald/10 rounded-xl py-2 px-3 shadow-xl opacity-0 scale-95 group-hover/lang:opacity-100 group-hover/lang:scale-100 transition-all pointer-events-none">
-                <span className="text-[10px] font-black text-royal-emerald/40 uppercase tracking-widest block whitespace-nowrap">Choose Language</span>
+                <span className="text-[10px] font-black text-royal-emerald/40 uppercase tracking-widest block whitespace-nowrap">Langue</span>
                 <div className="mt-1 flex flex-col gap-1">
-                  <button className="text-[11px] font-bold text-royal-emerald hover:text-saffron text-left uppercase">Français</button>
-                  <button className="text-[11px] font-bold text-royal-emerald hover:text-saffron text-left uppercase">العربية</button>
-                  <button className="text-[11px] font-bold text-royal-emerald hover:text-saffron text-left uppercase">English</button>
+                  <button className="text-[11px] font-bold text-saffron text-left uppercase">Français</button>
                 </div>
               </div>
             </button>
@@ -113,7 +111,7 @@ export function Header() {
                   </DropdownMenuTrigger>
                   <DropdownMenuContent className="w-56 bg-white/95 backdrop-blur-2xl border-royal-emerald/10 rounded-2xl shadow-2xl p-2 mt-2">
                     <DropdownMenuLabel className="font-royal text-[10px] text-royal-emerald/40 uppercase tracking-[0.2em] px-3 pb-1">
-                      Member Elite
+                      Membre Élite
                     </DropdownMenuLabel>
                     <DropdownMenuItem
                       onClick={() => navigate('/profile-setup')}
@@ -149,13 +147,13 @@ export function Header() {
                   onClick={() => navigate('/auth')}
                   className="text-sm font-black text-royal-emerald/80 hover:text-royal-emerald uppercase tracking-widest px-4 py-2 transition-all"
                 >
-                  Sign in
+                  Connexion
                 </button>
                 <Button
                   onClick={() => navigate('/auth?mode=signup')}
                   className="btn-royal shadow-royal-emerald/20"
                 >
-                  Sign up
+                  S'inscrire
                 </Button>
               </div>
             )}
@@ -232,7 +230,7 @@ export function Header() {
                     className="px-6 py-3 text-sm font-black text-royal-emerald/80 bg-white/40 rounded-2xl transition-all text-center uppercase tracking-widest"
                     onClick={() => setMobileMenuOpen(false)}
                   >
-                    Sign in
+                    Connexion
                   </Link>
                   <Button
                     onClick={() => {
@@ -241,7 +239,7 @@ export function Header() {
                     }}
                     className="btn-royal w-full py-6 text-base"
                   >
-                    Get started
+                    Commencer
                   </Button>
                 </div>
               )}
@@ -249,9 +247,7 @@ export function Header() {
               <div className="mt-4 px-6 flex items-center justify-between border-t border-royal-emerald/5 pt-4">
                 <span className="text-[10px] font-black text-royal-emerald/40 uppercase tracking-widest">Langue</span>
                 <div className="flex gap-4">
-                  <button className="text-[11px] font-bold text-royal-emerald hover:text-saffron uppercase">FR</button>
-                  <button className="text-[11px] font-bold text-royal-emerald hover:text-saffron uppercase">AR</button>
-                  <button className="text-[11px] font-bold text-royal-emerald hover:text-saffron uppercase">EN</button>
+                  <button className="text-[11px] font-bold text-saffron uppercase">FR</button>
                 </div>
               </div>
 
