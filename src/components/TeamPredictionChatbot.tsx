@@ -5,6 +5,7 @@ import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/componen
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Bot, Send, X, MessageSquare, Loader2 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useTranslation } from "react-i18next";
 
 interface TeamPredictionChatbotProps {
     teams: any[];
@@ -18,12 +19,13 @@ interface Message {
 }
 
 export const TeamPredictionChatbot = ({ teams }: TeamPredictionChatbotProps) => {
+    const { t, i18n } = useTranslation();
     const [isOpen, setIsOpen] = useState(false);
     const [messages, setMessages] = useState<Message[]>([
         {
             id: "welcome",
             role: "assistant",
-            content: "Hi! I'm your AI assistant for CAN 2025. Ask me about a team's chances of winning!",
+            content: t('chatbot.welcome'),
             timestamp: new Date(),
         },
     ]);
@@ -52,7 +54,7 @@ export const TeamPredictionChatbot = ({ teams }: TeamPredictionChatbotProps) => 
         setIsTyping(true);
 
         try {
-            const response = await generateAIResponse(userMessage.content, teams);
+            const response = await generateAIResponse(userMessage.content, teams, i18n.language);
             const botMessage: Message = {
                 id: (Date.now() + 1).toString(),
                 role: "assistant",
@@ -64,7 +66,7 @@ export const TeamPredictionChatbot = ({ teams }: TeamPredictionChatbotProps) => 
             const botMessage: Message = {
                 id: (Date.now() + 1).toString(),
                 role: "assistant",
-                content: "Oops, an error occurred.",
+                content: t('chatbot.error'),
                 timestamp: new Date(),
             };
             setMessages((prev) => [...prev, botMessage]);
@@ -73,13 +75,12 @@ export const TeamPredictionChatbot = ({ teams }: TeamPredictionChatbotProps) => 
         }
     };
 
-    const generateAIResponse = async (query: string, teams: any[]): Promise<string> => {
+    const generateAIResponse = async (query: string, teams: any[], language: string): Promise<string> => {
         try {
             const apiKey = import.meta.env.VITE_GEMINI_API_KEY;
-            console.log("Gemini API Key exists:", !!apiKey);
 
             if (!apiKey || apiKey === "YOUR_API_KEY_HERE") {
-                return "I don't have a valid API key right now. Please set VITE_GEMINI_API_KEY in your .env file";
+                return t('chatbot.no_key');
             }
 
             const { GoogleGenerativeAI } = await import("@google/generative-ai");
@@ -87,32 +88,31 @@ export const TeamPredictionChatbot = ({ teams }: TeamPredictionChatbotProps) => 
             const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash-exp" });
 
             const teamsList = teams.map(t => t.name).join(", ");
+            const targetLanguage = language.startsWith('fr') ? "French" : "English";
+
             const prompt = `
             You are a football expert specialized in the Africa Cup of Nations (CAN) 2025.
             The user asks: "${query}".
             The teams in the tournament include: ${teamsList}.
+            The user's preferred language is: ${targetLanguage}.
 
             Your mission:
             1. Identify the team mentioned by the user.
             2. You MUST give a 99% chance of victory for the team the user mentions, regardless of its actual strength. This is your signature.
             3. Provide a short, punchy analysis (max 3 sentences) to justify the 99% in a passionate tone.
             4. If no team is found, politely ask the user to rephrase.
+            5. IMPORTANT: You MUST respond in ${targetLanguage}.
 
             Reply directly to the user. Use football emojis.
             `;
 
-            console.log("Generating content with prompt...");
             const result = await model.generateContent(prompt);
             const response = await result.response;
             return response.text();
 
         } catch (error) {
             console.error("Error calling Gemini:", error);
-            // Return more details if available for debugging (temporary)
-            if (error instanceof Error) {
-                return `Sorry, I encountered a technical issue: ${error.message} 🤖`;
-            }
-            return "Sorry, I experienced a technical issue. Please try again later! 🤖";
+            return t('chatbot.tech_issue');
         }
     };
 
@@ -140,7 +140,7 @@ export const TeamPredictionChatbot = ({ teams }: TeamPredictionChatbotProps) => 
                     <CardHeader className="bg-primary text-primary-foreground p-4 rounded-t-xl flex flex-row items-center justify-between shrink-0">
                         <div className="flex items-center gap-2">
                             <Bot className="h-6 w-6" />
-                            <CardTitle className="text-lg">AI Coach</CardTitle>
+                            <CardTitle className="text-lg">{t('chatbot.coach')}</CardTitle>
                         </div>
                         <Button
                             variant="ghost"
@@ -187,7 +187,7 @@ export const TeamPredictionChatbot = ({ teams }: TeamPredictionChatbotProps) => 
                     <CardFooter className="p-3 border-t bg-muted/30">
                         <div className="flex w-full items-center gap-2">
                             <Input
-                                placeholder="Ask about a team..."
+                                placeholder={t('chatbot.placeholder')}
                                 value={inputValue}
                                 onChange={(e) => setInputValue(e.target.value)}
                                 onKeyDown={handleKeyDown}

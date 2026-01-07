@@ -1,7 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import ChampionCard from '@/components/ChampionCard';
+import { useTranslation } from "react-i18next";
 
 const Portfolios = () => {
+  const { t } = useTranslation();
   const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
 
   useEffect(() => {
@@ -20,8 +22,8 @@ const Portfolios = () => {
     {
       id: 1,
       name: "Rawâa M'chaâbat",
-      role: "Web Full Stack Developer",
-      status: "Click here to explore my portfolio",
+      role: t("portfolios.role"),
+      status: t("portfolios.card_status"),
       image: "/portfolios/rawaa.png",
       link: "https://portfoliomch-3foa.vercel.app/",
       number: 1
@@ -29,8 +31,8 @@ const Portfolios = () => {
     {
       id: 2,
       name: "Hassania El-falah",
-      role: "Web Full Stack Developer",
-      status: "Click here to explore my portfolio",
+      role: t("portfolios.role"),
+      status: t("portfolios.card_status"),
       image: "/portfolios/hassania.png",
       link: "https://myportfolio1-hia1.vercel.app/",
       number: 2
@@ -38,8 +40,8 @@ const Portfolios = () => {
     {
       id: 3,
       name: "Aya Asrir",
-      role: "Web Full Stack Developer",
-      status: "Click here to explore my portfolio",
+      role: t("portfolios.role"),
+      status: t("portfolios.card_status"),
       image: "/portfolios/aya.png",
       link: "https://portfolioaya-git-main-ayas-projects-1623d1c3.vercel.app/",
       number: 3
@@ -71,10 +73,10 @@ const Portfolios = () => {
               textShadow: "0 10px 30px rgba(0,0,0,0.5)"
             }}
           >
-            Our Teams
+            {t('portfolios.title')}
           </h1>
           <p className="text-gray-300 text-lg md:text-xl max-w-2xl mx-auto font-medium shadow-black drop-shadow-md">
-            Meet the legends behind the code. Click on their cards to explore their championship portfolios.
+            {t('portfolios.subtitle')}
           </p>
         </div>
 
@@ -101,7 +103,7 @@ const Portfolios = () => {
             className="w-32 h-32 object-contain animate-spin-slow mix-blend-screen rounded-full"
           />
           <div className="text-sm md:text-base font-bold text-yellow-500 uppercase tracking-[0.3em] bg-black/40 px-6 py-2 rounded-full border border-yellow-500/30 backdrop-blur-sm">
-            Click on the photos
+            {t('portfolios.ball_click')}
           </div>
         </div>
       </div>

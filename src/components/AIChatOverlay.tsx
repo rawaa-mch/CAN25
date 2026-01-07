@@ -10,6 +10,7 @@ import { Bot, Send, Settings, User, X, Sparkles } from "lucide-react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { AIAgent, AgentResponse, TOOLS } from "@/lib/ai-agent";
 import { useToast } from "@/components/ui/use-toast";
+import { useTranslation } from "react-i18next";
 
 const STORAGE_KEY = "gemini_api_key";
 
@@ -19,10 +20,11 @@ interface Message {
 }
 
 export function AIChatOverlay() {
+    const { t } = useTranslation();
     const [isOpen, setIsOpen] = useState(false);
     const [apiKey, setApiKey] = useState("");
     const [messages, setMessages] = useState<Message[]>([
-        { role: "ai", text: "Hello! I'm your AI Agent. How can I help you today?" }
+        { role: "ai", text: t('ai.welcome') }
     ]);
     const [input, setInput] = useState("");
     const [isLoading, setIsLoading] = useState(false);
@@ -33,7 +35,6 @@ export function AIChatOverlay() {
     const navigate = useNavigate();
     const { toast } = useToast();
 
-    // Load API Key on mount
     // Load API Key on mount
     useEffect(() => {
         const envKey = import.meta.env.VITE_GEMINI_API_KEY;
@@ -58,8 +59,8 @@ export function AIChatOverlay() {
             localStorage.setItem(STORAGE_KEY, apiKey);
             setAgent(new AIAgent(apiKey));
             toast({
-                title: "API Key Saved",
-                description: "Your AI agent is ready to go!",
+                title: t('ai.key_saved'),
+                description: t('ai.key_desc'),
             });
         }
     };
@@ -83,8 +84,8 @@ export function AIChatOverlay() {
         if (!input.trim() || !agent) {
             if (!agent) {
                 toast({
-                    title: "Setup Required",
-                    description: "Please set your Gemini API Key in settings first.",
+                    title: t('ai.setup_req'),
+                    description: t('ai.setup_desc'),
                     variant: "destructive"
                 });
             }
@@ -113,7 +114,7 @@ export function AIChatOverlay() {
             }
 
         } catch (error) {
-            setMessages(prev => [...prev, { role: "ai", text: "Sorry, I had trouble processing that request." }]);
+            setMessages(prev => [...prev, { role: "ai", text: t('ai.error') }]);
         } finally {
             setIsLoading(false);
         }
@@ -145,7 +146,7 @@ export function AIChatOverlay() {
                             className="h-full w-full object-cover"
                         />
                     </div>
-                    <CardTitle className="text-sm font-medium">AI Agent</CardTitle>
+                    <CardTitle className="text-sm font-medium">{t('ai.agent')}</CardTitle>
                 </div>
                 <div className="flex items-center gap-1">
                     <Dialog>
@@ -156,23 +157,23 @@ export function AIChatOverlay() {
                         </DialogTrigger>
                         <DialogContent>
                             <DialogHeader>
-                                <DialogTitle>AI Settings</DialogTitle>
+                                <DialogTitle>{t('ai.settings')}</DialogTitle>
                             </DialogHeader>
                             <div className="grid gap-4 py-4">
                                 <div className="grid gap-2">
-                                    <Label htmlFor="apiKey">Gemini API Key</Label>
+                                    <Label htmlFor="apiKey">{t('ai.api_key')}</Label>
                                     <Input
                                         id="apiKey"
                                         value={apiKey}
                                         onChange={(e) => setApiKey(e.target.value)}
                                         type="password"
-                                        placeholder="Enter your Google Gemini API Key"
+                                        placeholder={t('ai.placeholder_key')}
                                     />
                                     <p className="text-xs text-muted-foreground">
-                                        Your key is stored locally in your browser.
+                                        {t('ai.storage_note')}
                                     </p>
                                 </div>
-                                <Button onClick={handleSaveKey}>Save Key</Button>
+                                <Button onClick={handleSaveKey}>{t('ai.save_key')}</Button>
                             </div>
                         </DialogContent>
                     </Dialog>
@@ -200,7 +201,7 @@ export function AIChatOverlay() {
                             <div className="flex justify-start">
                                 <div className="bg-muted border border-border rounded-lg px-3 py-2 text-sm flex items-center gap-1">
                                     <Sparkles className="h-3 w-3 animate-spin" />
-                                    Thinking...
+                                    {t('ai.thinking')}
                                 </div>
                             </div>
                         )}
@@ -215,7 +216,7 @@ export function AIChatOverlay() {
                         <Input
                             value={input}
                             onChange={(e) => setInput(e.target.value)}
-                            placeholder="Ask me to navigate or reading context..."
+                            placeholder={t('ai.placeholder_input')}
                             className="flex-1"
                         />
                         <Button type="submit" size="icon" disabled={isLoading}>

@@ -8,14 +8,21 @@ import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import {
   MessageSquare, Send, Heart, ThumbsDown,
   Trash2, Edit2, ImageIcon, Users,
-  Calendar, Plus
+  Calendar, Plus, Globe, ChevronDown
 } from "lucide-react";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { useAuth } from "@/lib/auth";
 import { formatDistanceToNow } from "date-fns";
-import { enUS } from "date-fns/locale";
+import { enUS, fr } from "date-fns/locale";
+import { useTranslation } from "react-i18next";
 
 interface Comment {
   id: string;
@@ -40,8 +47,10 @@ interface Post {
 
 import { FALLBACK_POSTS } from "@/data/fallbackData";
 import { isSupabaseConfigured } from "@/integrations/supabase/client";
+import { translateText } from "@/services/translationService"; // Import translation service
 
 const Chat = () => {
+  const { t, i18n } = useTranslation();
   const { user } = useAuth();
   const queryClient = useQueryClient();
 
@@ -53,7 +62,45 @@ const Chat = () => {
   const [profile, setProfile] = useState<any>(null);
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [localReactions, setLocalReactions] = useState<Record<string, 'like' | 'dislike' | null>>({});
-  const [localPosts, setLocalPosts] = useState<Post[]>([]);
+  const [localPosts, setLocalPosts] = useState<Post[]>(() => {
+    // Load posts from localStorage on initial render
+    const saved = localStorage.getItem('chat_local_posts');
+    return saved ? JSON.parse(saved) : [];
+  });
+
+  // State to track translations
+  const [translatedContent, setTranslatedContent] = useState<Record<string, string>>({});
+  const [isTranslating, setIsTranslating] = useState<Record<string, boolean>>({});
+
+  const handleTranslate = async (id: string, text: string, lang: 'fr' | 'ar') => {
+    if (translatedContent[id]) {
+      // If already translated, allow re-translating if different, or we can add logic later.
+      // For now, simple override.
+    }
+
+    setIsTranslating(prev => ({ ...prev, [id]: true }));
+    try {
+      const translated = await translateText(text, lang);
+      setTranslatedContent(prev => ({ ...prev, [id]: translated }));
+    } catch (error) {
+      toast.error("Translation failed");
+    } finally {
+      setIsTranslating(prev => ({ ...prev, [id]: false }));
+    }
+  };
+
+  const handleRevert = (id: string) => {
+    const newTranslations = { ...translatedContent };
+    delete newTranslations[id];
+    setTranslatedContent(newTranslations);
+  };
+
+  const dateLocale = i18n.language === 'fr' ? fr : enUS;
+
+  // Save local posts to localStorage whenever they change
+  useEffect(() => {
+    localStorage.setItem('chat_local_posts', JSON.stringify(localPosts));
+  }, [localPosts]);
 
   const handleReaction = (postId: string, type: 'like' | 'dislike') => {
     setLocalReactions(prev => {
@@ -122,7 +169,7 @@ const Chat = () => {
             content,
             image_url: image || undefined,
             user_name: activeUserName,
-            user_id: null,
+            user_id: user?.id || null,
             likes: 0,
             dislikes: 0,
             created_at: new Date().toISOString(),
@@ -256,16 +303,16 @@ const Chat = () => {
             <div>
               <h1 className="text-3xl font-bold text-slate-900 tracking-tight flex items-center gap-3">
                 <MessageSquare className="w-8 h-8 text-royal-emerald" />
-                Community Forum
+                {t('chat.forum')}
               </h1>
               <p className="text-slate-500 font-medium mt-1">
-                Technical analyses and discussions about CANGOAL
+                {t('chat.subtitle')}
               </p>
             </div>
             <div className="flex items-center gap-3">
               <div className="hidden sm:flex items-center gap-2 px-4 py-2 bg-white rounded-lg border border-slate-200 text-xs font-bold text-slate-600">
                 <Users className="w-4 h-4" />
-                1,240 Online
+                1,240 {t('common.online')}
               </div>
               <Button
                 onClick={() => setIsFormOpen(!isFormOpen)}
@@ -274,10 +321,10 @@ const Chat = () => {
                   : 'bg-blue-600 text-white hover:bg-blue-700 shadow-md ring-1 ring-blue-600/20 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-blue-600'
                   }`}
               >
-                {isFormOpen ? 'Cancel' : (
+                {isFormOpen ? t('chat.cancel') : (
                   <>
                     <Plus className="w-4 h-4 mr-2" />
-                    New Topic
+                    {t('chat.new_topic')}
                   </>
                 )}
               </Button>
@@ -300,13 +347,13 @@ const Chat = () => {
                         </Avatar>
                         <div className="flex-1 space-y-3">
                           <Input
-                            placeholder="Topic title..."
+                            placeholder={t('chat.placeholder_title')}
                             value={title}
                             onChange={(e) => setTitle(e.target.value)}
                             className="h-11 border-slate-200 focus:border-royal-emerald focus:ring-1 focus:ring-royal-emerald rounded-lg font-bold text-slate-900"
                           />
                           <Textarea
-                            placeholder="Write your content..."
+                            placeholder={t('chat.placeholder_content')}
                             value={content}
                             onChange={(e) => setContent(e.target.value)}
                             className="min-h-[120px] border-slate-200 focus:border-royal-emerald focus:ring-1 focus:ring-royal-emerald rounded-lg font-medium text-slate-600 resize-none"
@@ -328,14 +375,14 @@ const Chat = () => {
                             className="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-slate-100 text-slate-500 cursor-pointer transition-all font-bold text-xs"
                           >
                             <ImageIcon className="w-4 h-4" />
-                            Media
+                            {t('chat.media')}
                           </label>
                         </div>
                         <Button
                           disabled={shareMutation.isPending || !title.trim() || !content.trim()}
                           className="h-10 px-6 bg-blue-600 text-white hover:bg-blue-700 rounded-lg font-bold shadow-md transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-blue-600"
                         >
-                          {shareMutation.isPending ? "Publishing..." : (editingId ? "Save" : "Publish Topic")}
+                          {shareMutation.isPending ? t('chat.publishing') : (editingId ? t('common.save') : t('chat.publish'))}
                         </Button>
                       </div>
 
@@ -367,8 +414,8 @@ const Chat = () => {
                 ) : displayPosts?.length === 0 ? (
                   <div className="text-center py-20 bg-white border border-slate-200 rounded-xl">
                     <MessageSquare className="w-12 h-12 text-slate-200 mx-auto mb-4" />
-                    <h3 className="text-lg font-bold text-slate-800">No active topics</h3>
-                    <p className="text-slate-500 text-sm mt-1">Be the first to start the discussion.</p>
+                    <h3 className="text-lg font-bold text-slate-800">{t('chat.no_topics')}</h3>
+                    <p className="text-slate-500 text-sm mt-1">{t('chat.be_the_first')}</p>
                   </div>
                 ) : (
                   displayPosts?.map((post) => (
@@ -387,29 +434,74 @@ const Chat = () => {
                                 <span className="font-bold text-slate-900 text-sm">{post.user_name}</span>
                                 <span className="text-[10px] text-slate-400 font-bold flex items-center gap-1 uppercase tracking-wider">
                                   <Calendar className="w-3 h-3" />
-                                  {formatDistanceToNow(new Date(post.created_at), { addSuffix: true, locale: enUS })}
+                                  {formatDistanceToNow(new Date(post.created_at), { addSuffix: true, locale: dateLocale })}
                                 </span>
                               </div>
                             </div>
                           </div>
 
-                          {(user?.id === post.user_id || !post.user_id) && (
-                            <div className="flex gap-1">
-                              <Button variant="ghost" size="icon" onClick={() => handleEdit(post)} className="h-8 w-8 rounded-md hover:bg-slate-100 text-slate-400">
-                                <Edit2 className="w-3.5 h-3.5" />
-                              </Button>
-                              <Button variant="ghost" size="icon" onClick={() => deleteMutation.mutate(post.id)} className="h-8 w-8 rounded-md hover:bg-red-50 text-slate-400 hover:text-red-500">
-                                <Trash2 className="w-3.5 h-3.5" />
-                              </Button>
-                            </div>
-                          )}
+                          {/* Show edit/delete for: 1) authenticated user's posts, 2) local posts created by current local user */}
+                          {((user?.id && user.id === post.user_id) ||
+                            (!user?.id && !post.user_id && post.user_name === activeUserName) ||
+                            (post.id.startsWith('local-') && post.user_name === activeUserName)) && (
+                              <div className="flex gap-1">
+                                <Button variant="ghost" size="icon" onClick={() => handleEdit(post)} className="h-8 w-8 rounded-md hover:bg-slate-100 text-slate-400">
+                                  <Edit2 className="w-3.5 h-3.5" />
+                                </Button>
+                                <Button variant="ghost" size="icon" onClick={() => deleteMutation.mutate(post.id)} className="h-8 w-8 rounded-md hover:bg-red-50 text-slate-400 hover:text-red-500">
+                                  <Trash2 className="w-3.5 h-3.5" />
+                                </Button>
+                              </div>
+                            )}
                         </div>
 
                         {/* Post Body */}
                         <div className="flex flex-col md:flex-row gap-6">
                           <div className="flex-1">
-                            <h3 className="text-xl font-bold text-slate-900 mb-2 leading-tight">{post.title}</h3>
-                            <p className="text-slate-600 font-medium text-sm leading-relaxed line-clamp-3 mb-4">{post.content}</p>
+                            <h3 className="text-xl font-bold text-slate-900 mb-2 leading-tight">
+                              {translatedContent[`title-${post.id}`] || post.title}
+                            </h3>
+                            <p className="text-slate-600 font-medium text-sm leading-relaxed line-clamp-3 mb-4">
+                              {translatedContent[`content-${post.id}`] || post.content}
+                            </p>
+                            <div className="flex gap-2">
+                              <DropdownMenu>
+                                <DropdownMenuTrigger asChild>
+                                  <Button
+                                    variant="ghost"
+                                    size="sm"
+                                    className="text-xs h-7 px-2 text-slate-400 hover:text-royal-emerald"
+                                    disabled={isTranslating[`title-${post.id}`]}
+                                  >
+                                    <Globe className="w-3 h-3 mr-1" />
+                                    {isTranslating[`title-${post.id}`] ? "..." : (translatedContent[`title-${post.id}`] ? "Traduire" : "Traduire")}
+                                    <ChevronDown className="w-3 h-3 ml-1 opacity-50" />
+                                  </Button>
+                                </DropdownMenuTrigger>
+                                <DropdownMenuContent align="start">
+                                  <DropdownMenuItem onClick={() => {
+                                    handleTranslate(`title-${post.id}`, post.title, 'fr');
+                                    handleTranslate(`content-${post.id}`, post.content, 'fr');
+                                  }}>
+                                    Français
+                                  </DropdownMenuItem>
+                                  <DropdownMenuItem onClick={() => {
+                                    handleTranslate(`title-${post.id}`, post.title, 'ar');
+                                    handleTranslate(`content-${post.id}`, post.content, 'ar');
+                                  }}>
+                                    العربية (Arabe)
+                                  </DropdownMenuItem>
+                                  {translatedContent[`title-${post.id}`] && (
+                                    <DropdownMenuItem onClick={() => {
+                                      handleRevert(`title-${post.id}`);
+                                      handleRevert(`content-${post.id}`);
+                                    }}>
+                                      Voir l'original
+                                    </DropdownMenuItem>
+                                  )}
+                                </DropdownMenuContent>
+                              </DropdownMenu>
+                            </div>
                           </div>
                           {post.image_url && (
                             <div className="w-full md:w-32 h-24 shrink-0 rounded-lg overflow-hidden border border-slate-100">
@@ -440,7 +532,106 @@ const Chat = () => {
                             {post.dislikes + (localReactions[post.id] === 'dislike' ? 1 : 0)}
                           </button>
 
+                          <button
+                            onClick={() => {
+                              const commentSection = document.getElementById(`comments-${post.id}`);
+                              if (commentSection) {
+                                commentSection.classList.toggle('hidden');
+                              }
+                            }}
+                            className="flex items-center gap-1.5 text-xs font-bold text-slate-400 hover:text-blue-600 hover:bg-slate-50 rounded-md px-2 py-1 transition-colors"
+                          >
+                            <MessageSquare className="w-4 h-4" />
+                            {post.chat_comments?.length || 0}
+                          </button>
+                        </div>
 
+                        {/* Comments Section */}
+                        <div id={`comments-${post.id}`} className="hidden mt-4 pt-4 border-t border-slate-100 space-y-3">
+                          {/* Existing Comments */}
+                          {post.chat_comments && post.chat_comments.length > 0 && (
+                            <div className="space-y-2 mb-3">
+                              {post.chat_comments.map((comment) => (
+                                <div key={comment.id} className="flex gap-2 bg-slate-50 rounded-lg p-3">
+                                  <Avatar className="h-7 w-7 border border-slate-200 shrink-0">
+                                    <AvatarFallback className="bg-white text-slate-600 font-bold text-xs uppercase">
+                                      {comment.user_name.charAt(0)}
+                                    </AvatarFallback>
+                                  </Avatar>
+                                  <div className="flex-1 min-w-0">
+                                    <div className="flex items-center gap-2 mb-1">
+                                      <span className="font-bold text-slate-900 text-xs">{comment.user_name}</span>
+                                      <span className="text-[9px] text-slate-400 font-bold uppercase">
+                                        {formatDistanceToNow(new Date(comment.created_at), { addSuffix: true, locale: dateLocale })}
+                                      </span>
+                                    </div>
+                                    <p className="text-sm text-slate-600 font-medium break-words">
+                                      {translatedContent[`comment-${comment.id}`] || comment.content}
+                                    </p>
+                                    <div className="flex gap-2">
+                                      <DropdownMenu>
+                                        <DropdownMenuTrigger asChild>
+                                          <button
+                                            className="text-[10px] text-slate-400 hover:text-royal-emerald font-bold mt-1 flex items-center gap-1"
+                                            disabled={isTranslating[`comment-${comment.id}`]}
+                                          >
+                                            <Globe className="w-3 h-3" />
+                                            {isTranslating[`comment-${comment.id}`] ? "..." : "Traduire"}
+                                          </button>
+                                        </DropdownMenuTrigger>
+                                        <DropdownMenuContent align="start">
+                                          <DropdownMenuItem onClick={() => handleTranslate(`comment-${comment.id}`, comment.content, 'fr')}>
+                                            Français
+                                          </DropdownMenuItem>
+                                          <DropdownMenuItem onClick={() => handleTranslate(`comment-${comment.id}`, comment.content, 'ar')}>
+                                            العربية (Arabe)
+                                          </DropdownMenuItem>
+                                          {translatedContent[`comment-${comment.id}`] && (
+                                            <DropdownMenuItem onClick={() => handleRevert(`comment-${comment.id}`)}>
+                                              Voir l'original
+                                            </DropdownMenuItem>
+                                          )}
+                                        </DropdownMenuContent>
+                                      </DropdownMenu>
+                                    </div>
+                                  </div>
+                                </div>
+                              ))}
+                            </div>
+                          )}
+
+                          {/* Add Comment Form */}
+                          <form
+                            onSubmit={(e) => {
+                              e.preventDefault();
+                              const input = e.currentTarget.elements.namedItem('comment-input') as HTMLInputElement;
+                              if (input.value.trim()) {
+                                commentMutation.mutate({ postId: post.id, text: input.value });
+                                input.value = '';
+                              }
+                            }}
+                            className="flex gap-2"
+                          >
+                            <Avatar className="h-7 w-7 border border-slate-200 shrink-0">
+                              <AvatarFallback className="bg-slate-100 text-slate-600 font-bold text-xs uppercase">
+                                {activeUserName.charAt(0)}
+                              </AvatarFallback>
+                            </Avatar>
+                            <div className="flex-1 flex gap-2">
+                              <Input
+                                name="comment-input"
+                                placeholder={t('chat.add_comment')}
+                                className="h-9 border-slate-200 focus:border-royal-emerald focus:ring-1 focus:ring-royal-emerald rounded-lg text-sm"
+                              />
+                              <Button
+                                type="submit"
+                                size="sm"
+                                className="h-9 px-4 bg-blue-600 text-white hover:bg-blue-700 rounded-lg font-bold shadow-sm"
+                              >
+                                <Send className="w-3.5 h-3.5" />
+                              </Button>
+                            </div>
+                          </form>
                         </div>
 
                       </div>
@@ -459,16 +650,16 @@ const Chat = () => {
                   </Avatar>
                   <div>
                     <p className="text-sm font-bold text-white">{activeUserName}</p>
-                    <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest">Connected</p>
+                    <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest">{t('common.online')}</p>
                   </div>
                 </div>
                 <CardContent className="p-4 space-y-2">
                   <div className="flex justify-between items-center text-xs p-2.5 bg-slate-50 rounded-lg">
-                    <span className="text-slate-500 font-bold uppercase tracking-tighter">My Posts</span>
+                    <span className="text-slate-500 font-bold uppercase tracking-tighter">{t('chat.my_posts')}</span>
                     <span className="font-bold text-slate-900">{displayPosts?.filter(p => p.user_id === user?.id).length || 0}</span>
                   </div>
                   <div className="flex justify-between items-center text-xs p-2.5 bg-slate-50 rounded-lg">
-                    <span className="text-slate-500 font-bold uppercase tracking-tighter">Score Impact</span>
+                    <span className="text-slate-500 font-bold uppercase tracking-tighter">{t('chat.score_impact')}</span>
                     <span className="font-bold text-royal-emerald">
                       {(displayPosts?.filter(p => p.user_id === user?.id).reduce((acc, p) => acc + (p.likes || 0), 0) || 0) * 10} pts
                     </span>

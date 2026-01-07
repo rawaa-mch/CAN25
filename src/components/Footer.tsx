@@ -1,13 +1,16 @@
 import { FaFacebookF, FaInstagram, FaLinkedinIn, FaFutbol, FaGithub, FaTwitter } from "react-icons/fa";
 import { MdLocationOn, MdPhone, MdEmail } from "react-icons/md";
 import { Link } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 
 export function Footer() {
+  const { t } = useTranslation();
+
   const navigationLinks = [
-    { name: "MATCHES", path: "/" },
-    { name: "GROUPS", path: "/groups" },
-    { name: "TABLEAU", path: "/bracket" },
-    { name: "CHAT", path: "/chat" },
+    { name: t("nav.matches"), path: "/" },
+    { name: t("nav.groups"), path: "/groups" },
+    { name: t("nav.tableau"), path: "/bracket" },
+    { name: t("nav.chat"), path: "/chat" },
     { name: "PORTFOLIOS", path: "/portfolios" },
   ];
 
@@ -49,7 +52,7 @@ export function Footer() {
               </div>
             </Link>
             <p className="text-gray-400 text-sm leading-relaxed max-w-xs">
-              The ultimate hub for the 2025 Africa Cup of Nations. Stay connected with fan-driven predictions. Engage with the heart of African football and never miss a moment of the action!
+              {t('footer.description')}
             </p>
 
             <div className="flex gap-3">
@@ -70,7 +73,7 @@ export function Footer() {
 
           {/* Navigation */}
           <div>
-            <h3 className="font-royal text-lg mb-6 text-white uppercase tracking-widest border-b border-white/5 pb-2 inline-block">Navigation</h3>
+            <h3 className="font-royal text-lg mb-6 text-white uppercase tracking-widest border-b border-white/5 pb-2 inline-block">{t('footer.navigation')}</h3>
             <ul className="space-y-4">
               {navigationLinks.map((item) => (
                 <li key={item.name}>
@@ -88,7 +91,7 @@ export function Footer() {
 
           {/* team */}
           <div>
-            <h3 className="font-royal text-lg mb-6 text-white uppercase tracking-widest border-b border-white/5 pb-2 inline-block">Our Team</h3>
+            <h3 className="font-royal text-lg mb-6 text-white uppercase tracking-widest border-b border-white/5 pb-2 inline-block">{t('footer.our_team')}</h3>
             <ul className="space-y-4">
               {teamMembers.map((member) => (
                 <li key={member.name} className="group">
@@ -101,7 +104,7 @@ export function Footer() {
 
           {/* Contact */}
           <div>
-            <h3 className="font-royal text-lg mb-6 text-white uppercase tracking-widest border-b border-white/5 pb-2 inline-block">Contact</h3>
+            <h3 className="font-royal text-lg mb-6 text-white uppercase tracking-widest border-b border-white/5 pb-2 inline-block">{t('footer.contact')}</h3>
             <div className="space-y-4">
               <a href="#" className="flex items-center gap-3 p-3 rounded-2xl bg-white/5 border border-white/10 hover:border-green-400/30 transition-all group">
                 <div className="w-8 h-8 flex items-center justify-center rounded-lg bg-green-400/10 text-green-400">
@@ -128,18 +131,18 @@ export function Footer() {
         {/* Bottom */}
         <div className="mt-20 pt-8 border-t border-white/5 flex flex-col md:flex-row items-center justify-between gap-4">
           <p className="text-xs text-gray-500 font-medium">
-            © {new Date().getFullYear()} CANGOAL Morocco — All rights reserved
+            © {new Date().getFullYear()} {t('footer.rights')}
           </p>
           <div className="flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/5 border border-white/10">
-            <span className="text-[10px] text-gray-400 uppercase tracking-widest font-black">Developed with <span className="animate-pulse text-red-500">❤️</span> in Morocco</span>
+            <span className="text-[10px] text-gray-400 uppercase tracking-widest font-black">{t('footer.developed_with')} <span className="animate-pulse text-red-500">❤️</span> in Morocco</span>
             <span className="text-sm">🇲🇦</span>
           </div>
         </div>
-      
- 
+
+
       </div>
     </footer>
   );
 }
-      
+
 

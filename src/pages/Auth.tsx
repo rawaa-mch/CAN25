@@ -7,6 +7,7 @@ import { Label } from '@/components/ui/label';
 import { Trophy, Loader2, ArrowLeft, Eye, EyeOff, Sparkles, Shield } from 'lucide-react';
 import { toast } from 'sonner';
 import { z } from 'zod';
+import { useTranslation } from 'react-i18next';
 
 const authSchema = z.object({
   email: z.string().email('Invalid email address'),
@@ -15,6 +16,7 @@ const authSchema = z.object({
 });
 
 export default function Auth() {
+  const { t } = useTranslation();
   const [searchParams] = useSearchParams();
   const [isSignUp, setIsSignUp] = useState(searchParams.get('mode') === 'signup');
   const [email, setEmail] = useState('');
@@ -134,7 +136,7 @@ export default function Auth() {
           <div className="p-2 bg-white/10 rounded-xl group-hover:bg-saffron/20 group-hover:-translate-x-1 transition-all duration-300">
             <ArrowLeft className="w-4 h-4" />
           </div>
-          Back to home
+          {t('common.back_to_home')}
         </button>
 
         <div className="glass-zellige rounded-[2rem] p-8 shadow-2xl relative overflow-hidden group/form flex flex-col justify-center backdrop-blur-sm border border-white/10">
@@ -156,15 +158,15 @@ export default function Auth() {
               />
             </div>
             <h1 className="font-royal text-3xl text-royal-emerald mb-2 uppercase tracking-tighter text-center">
-              {isSignUp ? 'JOIN' : 'SIGN IN'} <span className="text-star-red relative">
-                THE ELITE
+              {t(isSignUp ? 'auth.join' : 'auth.signin')} <span className="text-star-red relative">
+                {t('auth.elite')}
                 <span className="absolute -bottom-1 left-0 right-0 h-0.5 bg-gradient-to-r from-transparent via-saffron to-transparent opacity-60" />
               </span>
             </h1>
             <div className="flex items-center justify-center gap-3 mb-2">
               <span className="h-0.5 w-4 bg-gradient-to-r from-transparent to-saffron/60 rounded-full" />
               <p className="text-royal-emerald/60 font-black uppercase tracking-[0.2em] text-[10px] bg-white/5 px-3 py-1 rounded-full">
-                {isSignUp ? 'Create Account' : 'Member Area'}
+                {t(isSignUp ? 'common.create_account' : 'common.member_area')}
               </p>
               <span className="h-0.5 w-4 bg-gradient-to-l from-transparent to-saffron/60 rounded-full" />
             </div>
@@ -175,14 +177,14 @@ export default function Auth() {
               <div className="space-y-2">
                 <Label htmlFor="fullName" className="font-royal text-royal-emerald/80 uppercase tracking-widest text-[10px] ml-2 flex items-center gap-1">
                   <span className="w-1 h-1 bg-saffron rounded-full" />
-                  Nom Complet
+                  {t('auth.full_name')}
                 </Label>
                 <div className="relative">
                   <Input
                     id="fullName"
                     value={fullName}
                     onChange={(e) => setFullName(e.target.value)}
-                    placeholder="VOTRE NOM"
+                    placeholder={t('auth.placeholder_name')}
                     className="h-11 bg-white/60 border-royal-emerald/15 rounded-xl font-royal text-royal-emerald focus:ring-2 focus:ring-saffron/30 transition-all placeholder:text-royal-emerald/30 text-sm pl-4 pr-10 shadow-inner"
                   />
                   {fullName && (
@@ -205,7 +207,7 @@ export default function Auth() {
                   type="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  placeholder="VOTRE@EMAIL.COM"
+                  placeholder={t('auth.placeholder_email')}
                   className="h-11 bg-white/60 border-royal-emerald/15 rounded-xl font-royal text-royal-emerald focus:ring-2 focus:ring-saffron/30 transition-all placeholder:text-royal-emerald/30 text-sm pl-4 pr-10 shadow-inner"
                 />
                 {email && (
@@ -219,7 +221,7 @@ export default function Auth() {
             <div className="space-y-2">
               <Label htmlFor="password" className="font-royal text-royal-emerald/80 uppercase tracking-widest text-[10px] ml-2 flex items-center gap-1">
                 <span className="w-1 h-1 bg-saffron rounded-full" />
-                Mot de passe
+                {t('auth.password')}
               </Label>
               <div className="relative">
                 <Input
@@ -258,7 +260,7 @@ export default function Auth() {
               </div>
               {password && isSignUp && (
                 <div className="text-[10px] text-royal-emerald/60 font-medium mt-1">
-                  Strength: {passwordStrength >= 75 ? 'Strong' : passwordStrength >= 50 ? 'Medium' : 'Weak'}
+                  {t('auth.strength')}: {passwordStrength >= 75 ? t('auth.strong') : passwordStrength >= 50 ? t('auth.medium') : t('auth.weak')}
                 </div>
               )}
             </div>
@@ -272,11 +274,11 @@ export default function Auth() {
               {loading ? (
                 <>
                   <Loader2 className="w-4 h-4 animate-spin mr-2" />
-                  {isSignUp ? 'Creating account...' : 'Signing in...'}
+                  {isSignUp ? t('auth.create_btn') : t('auth.signin_btn')}
                 </>
               ) : (
                 <>
-                  {isSignUp ? 'CREATE ACCOUNT' : 'SIGN IN'}
+                  {t(isSignUp ? 'auth.create_btn' : 'auth.signin_btn')}
                   <Sparkles className="w-4 h-4 ml-2 opacity-60 group-hover:opacity-100 transition-opacity" />
                 </>
               )}
@@ -285,7 +287,7 @@ export default function Auth() {
 
           <div className="mt-6 pt-6 border-t border-royal-emerald/10 text-center shrink-0">
             <p className="text-xs font-black text-royal-emerald/50 uppercase tracking-widest">
-              {isSignUp ? 'Already a member of the elite?' : "Not registered yet?"}{' '}
+              {t(isSignUp ? 'auth.already_member' : 'auth.not_registered')}{' '}
               <button
                 onClick={() => {
                   setIsSignUp(!isSignUp);
@@ -293,12 +295,12 @@ export default function Auth() {
                 }}
                 className="text-star-red hover:text-royal-emerald transition-colors ml-1 font-bold relative group"
               >
-                {isSignUp ? 'SIGN IN' : "SIGN UP"}
+                {t(isSignUp ? 'auth.signin_btn' : 'auth.create_btn')}
                 <span className="absolute -bottom-0.5 left-0 right-0 h-0.5 bg-star-red/20 scale-x-0 group-hover:scale-x-100 transition-transform origin-left" />
               </button>
             </p>
             <p className="text-[10px] text-royal-emerald/30 mt-2 font-medium">
-              Your data is secured with military-grade encryption
+              {t('auth.security_note')}
             </p>
           </div>
         </div>

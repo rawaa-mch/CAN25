@@ -16,10 +16,12 @@ import { Card, CardContent } from "@/components/ui/card";
 import html2canvas from "html2canvas";
 import { useToast } from "@/hooks/use-toast";
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 
 import { FALLBACK_TEAMS } from "@/data/fallbackData";
 
 const Bracket = () => {
+  const { t } = useTranslation();
   const predictionContext = useContext(PredictionContext);
   const { user } = useAuth();
   const navigate = useNavigate();
@@ -222,11 +224,11 @@ const Bracket = () => {
                   CANGOAL
                 </span>
                 <br />
-                <span className="text-gray-900">Tournament Bracket</span>
+                <span className="text-gray-900">{t('bracket.title')}</span>
               </h1>
 
               <p className="text-base md:text-xl text-gray-600 max-w-2xl mx-auto leading-relaxed px-4">
-                Predict the journey to glory. Every match matters. Every prediction counts.
+                {t('bracket.subtitle')}
               </p>
             </div>
 
@@ -239,9 +241,9 @@ const Bracket = () => {
                       <Target className="w-5 md:w-6 h-5 md:h-6 text-primary" />
                     </div>
                     <div>
-                      <p className="text-xs md:text-sm text-gray-500">Your Prediction</p>
+                      <p className="text-xs md:text-sm text-gray-500">{t('bracket.your_prediction')}</p>
                       <p className="text-lg md:text-2xl font-bold text-gray-900 truncate">
-                        {champion ? champion.name : "Not set"}
+                        {champion ? champion.name : t('bracket.not_set')}
                       </p>
                     </div>
                   </div>
@@ -255,7 +257,7 @@ const Bracket = () => {
                       <Users className="w-5 md:w-6 h-5 md:h-6 text-blue-500" />
                     </div>
                     <div>
-                      <p className="text-xs md:text-sm text-gray-500">Active Predictors</p>
+                      <p className="text-xs md:text-sm text-gray-500">{t('bracket.active_predictors')}</p>
                       <p className="text-lg md:text-2xl font-bold text-gray-900">2,847</p>
                     </div>
                   </div>
@@ -269,8 +271,8 @@ const Bracket = () => {
                       <Calendar className="w-5 md:w-6 h-5 md:h-6 text-emerald-500" />
                     </div>
                     <div>
-                      <p className="text-xs md:text-sm text-gray-500">Time Remaining</p>
-                      <p className="text-lg md:text-2xl font-bold text-gray-900">14 days</p>
+                      <p className="text-xs md:text-sm text-gray-500">{t('common.time_remaining')}</p>
+                      <p className="text-lg md:text-2xl font-bold text-gray-900">14 {t('common.days')}</p>
                     </div>
                   </div>
                 </CardContent>
@@ -289,12 +291,12 @@ const Bracket = () => {
                     {isSaving ? (
                       <>
                         <Loader2 className="w-4 md:w-5 h-4 md:h-5 animate-spin mr-2 md:mr-3" />
-                        Saving...
+                        {t('bracket.saving')}
                       </>
                     ) : (
                       <>
                         <Save className="w-4 md:w-5 h-4 md:h-5 mr-2 md:mr-3" />
-                        Save Predictions
+                        {t('bracket.save_predictions')}
                       </>
                     )}
                   </Button>
@@ -303,7 +305,7 @@ const Bracket = () => {
                     className="w-full md:w-auto h-11 md:h-12 px-6 md:px-8 text-sm md:text-base font-medium rounded-full border-2 hover:border-primary hover:bg-primary/5 transition-all"
                     onClick={scrollToBracket}
                   >
-                    View My Predictions
+                    {t('bracket.view_my')}
                   </Button>
                 </>
               ) : (
@@ -312,7 +314,7 @@ const Bracket = () => {
                   className="w-full md:w-auto h-11 md:h-12 px-6 md:px-8 text-sm md:text-base font-medium rounded-full bg- gradient-to-r from-primary to-primary/90 hover:from-primary/90 hover:to-primary shadow-lg hover:shadow-xl transition-all duration-300"
                 >
                   <LogIn className="w-4 md:w-5 h-4 md:h-5 mr-2 md:mr-3" />
-                  Sign in to Predict
+                  {t('bracket.signin_to_predict')}
                 </Button>
               )}
 
@@ -320,39 +322,39 @@ const Bracket = () => {
                 onClick={handleDownload}
                 disabled={isCapturing}
                 className="w-full md:w-auto h-11 md:h-12 px-6 md:px-8 text-sm md:text-base font-medium rounded-full bg-gradient-to-r from-primary to-primary/90 hover:from-primary/90 hover:to-primary shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1"
-                title="Download the bracket diagram"
+                title={t('bracket.download_diagram')}
               >
                 {isCapturing ? (
                   <Loader2 className="w-4 md:w-5 h-4 md:h-5 animate-spin mr-2 md:mr-3" />
                 ) : (
                   <Download className="w-4 md:w-5 h-4 md:h-5 mr-2 md:mr-3" />
                 )}
-                {isCapturing ? "Generating..." : "Download diagram"}
+                {isCapturing ? t('bracket.generating') : t('bracket.download_diagram')}
               </Button>
             </div>
 
             {/* Instructions */}
             <div className="mt-8 md:mt-12 pt-6 md:pt-8 border-t border-gray-200">
               <div className="max-w-3xl mx-auto text-center px-4">
-                <h3 className="text-base md:text-lg font-semibold text-gray-900 mb-4">How to Play</h3>
+                <h3 className="text-base md:text-lg font-semibold text-gray-900 mb-4">{t('bracket.how_to_play')}</h3>
                 <div className="grid grid-cols-3 gap-4 md:gap-6">
                   <div className="space-y-2">
                     <div className="w-7 md:w-8 h-7 md:h-8 mx-auto rounded-full bg-primary/10 flex items-center justify-center">
                       <span className="text-primary font-bold text-sm md:text-base">1</span>
                     </div>
-                    <p className="text-xs md:text-base text-gray-600">Click on match winners</p>
+                    <p className="text-xs md:text-base text-gray-600">{t('bracket.step1')}</p>
                   </div>
                   <div className="space-y-2">
                     <div className="w-7 md:w-8 h-7 md:h-8 mx-auto rounded-full bg-primary/10 flex items-center justify-center">
                       <span className="text-primary font-bold text-sm md:text-base">2</span>
                     </div>
-                    <p className="text-xs md:text-base text-gray-600">Predict the champion</p>
+                    <p className="text-xs md:text-base text-gray-600">{t('bracket.step2')}</p>
                   </div>
                   <div className="space-y-2">
                     <div className="w-7 md:w-8 h-7 md:h-8 mx-auto rounded-full bg-primary/10 flex items-center justify-center">
                       <span className="text-primary font-bold text-sm md:text-base">3</span>
                     </div>
-                    <p className="text-xs md:text-base text-gray-600">Save and compete</p>
+                    <p className="text-xs md:text-base text-gray-600">{t('bracket.step3')}</p>
                   </div>
                 </div>
               </div>
@@ -365,9 +367,9 @@ const Bracket = () => {
       <main ref={bracketRef} className="container mx-auto px-2 md:px-4 py-6 md:py-16">
         <div className="mb-6 md:mb-8">
           <div className="flex items-center justify-between mb-4 md:mb-6 px-2">
-            <h2 className="text-xl md:text-3xl font-bold text-gray-900">Tournament Bracket</h2>
+            <h2 className="text-xl md:text-3xl font-bold text-gray-900">{t('bracket.title')}</h2>
             <div className="text-xs md:text-sm text-gray-500">
-              {displayTeams?.length || 0} teams
+              {displayTeams?.length || 0} {t('hero.stats.teams')}
             </div>
           </div>
 
@@ -375,7 +377,7 @@ const Bracket = () => {
             <div className="flex items-center justify-center py-12 md:py-20">
               <div className="text-center">
                 <Loader2 className="w-10 md:w-12 h-10 md:h-12 animate-spin text-primary mx-auto mb-3 md:mb-4" />
-                <p className="text-sm md:text-base text-gray-600">Loading tournament data...</p>
+                <p className="text-sm md:text-base text-gray-600">{t('groups.loading')}</p>
               </div>
             </div>
           ) : (
@@ -383,7 +385,7 @@ const Bracket = () => {
               {/* Mobile scroll hint */}
               <div className="md:hidden text-center py-3 text-sm text-gray-500 flex items-center justify-center gap-2">
                 <span>👈</span>
-                <span>Swipe right/left to see all matches</span>
+                <span>{t('bracket.swipe_hint')}</span>
                 <span>👉</span>
               </div>
               <div className="bg-white rounded-xl md:rounded-2xl border md:border-2 border-gray-100 p-2 md:p-6 shadow-sm">
@@ -447,20 +449,20 @@ const Bracket = () => {
             ) : (
               <Save className="w-5 h-5 mr-2" />
             )}
-            Save
+            {t('common.save')}
           </Button>
           <Button
             className="flex-1 max-w-[160px] h-12 rounded-full bg-blue-600 text-white shadow-lg hover:shadow-xl transition-all duration-300"
             onClick={handleDownload}
             disabled={isCapturing}
-            title="Share or download the bracket diagram"
+            title={t('bracket.download_diagram')}
           >
             {isCapturing ? (
               <Loader2 className="w-5 h-5 animate-spin mr-2" />
             ) : (
               <Download className="w-5 h-5 mr-2" />
             )}
-            {isCapturing ? "Generating..." : "Share"}
+            {isCapturing ? t('bracket.generating') : "Share"}
           </Button>
         </div>
       )}
