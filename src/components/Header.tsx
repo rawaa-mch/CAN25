@@ -1,7 +1,7 @@
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '@/lib/auth';
 import { Button } from '@/components/ui/button';
-import { Trophy, LogOut, User, LayoutDashboard, Menu, X, Languages, ChevronDown } from 'lucide-react';
+import { Trophy, LogOut, User, LayoutDashboard, Menu, X, Languages, ChevronDown, Check } from 'lucide-react';
 import { useState } from 'react';
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
 import { useTranslation } from 'react-i18next';
@@ -87,30 +87,38 @@ export function Header() {
 
           {/* Premium Actions */}
           <div className="hidden md:flex items-center gap-5">
-            {/* Translation Picker */}
-            <div className="relative group/lang">
-              <button className="p-2 text-royal-emerald/60 hover:text-royal-emerald transition-colors">
-                <Languages className="w-5 h-5" />
-              </button>
-              <div className="absolute top-full right-0 mt-2 bg-white/95 backdrop-blur-xl border border-royal-emerald/10 rounded-xl py-2 px-3 shadow-xl opacity-0 scale-95 group-hover/lang:opacity-100 group-hover/lang:scale-100 transition-all pointer-events-none group-hover/lang:pointer-events-auto z-50">
-                <span className="text-[10px] font-black text-royal-emerald/40 uppercase tracking-widest block whitespace-nowrap mb-2">{t('common.language')}</span>
-                <div className="flex flex-col gap-1.5 min-w-[100px]">
-                  <button
+            {/* Premium Language Switcher */}
+            <div className="flex items-center">
+              <DropdownMenu>
+                <DropdownMenuTrigger className="outline-none">
+                  <div className="flex items-center gap-2 p-1.5 px-3 bg-royal-emerald/5 hover:bg-royal-emerald/10 rounded-full border border-royal-emerald/5 transition-all group/lang">
+                    <Languages className="w-4 h-4 text-royal-emerald/60 group-hover/lang:text-royal-emerald transition-colors" />
+                    <span className="text-[10px] font-black text-royal-emerald uppercase tracking-widest">
+                      {i18n.language.split('-')[0]}
+                    </span>
+                    <ChevronDown className="w-3 h-3 text-royal-emerald/30 group-hover/lang:text-royal-emerald transition-colors" />
+                  </div>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent className="w-40 bg-white/95 backdrop-blur-2xl border-royal-emerald/10 rounded-2xl shadow-2xl p-2 mt-2">
+                  <DropdownMenuLabel className="font-royal text-[9px] text-royal-emerald/40 uppercase tracking-[0.2em] px-3 pb-1">
+                    {t('common.language')}
+                  </DropdownMenuLabel>
+                  <DropdownMenuItem
                     onClick={() => changeLanguage('fr')}
-                    className={`text-[11px] font-bold uppercase transition-colors text-left flex items-center justify-between ${i18n.language === 'fr' ? 'text-saffron' : 'text-royal-emerald/60 hover:text-royal-emerald'}`}
+                    className={`rounded-xl focus:bg-royal-emerald/5 font-bold uppercase text-[10px] cursor-pointer flex items-center justify-between ${i18n.language === 'fr' ? 'text-saffron' : 'text-royal-emerald'}`}
                   >
                     Français
-                    {i18n.language === 'fr' && <span className="w-1 h-1 bg-saffron rounded-full ml-2" />}
-                  </button>
-                  <button
+                    {i18n.language === 'fr' && <Check className="w-3 h-3" />}
+                  </DropdownMenuItem>
+                  <DropdownMenuItem
                     onClick={() => changeLanguage('en')}
-                    className={`text-[11px] font-bold uppercase transition-colors text-left flex items-center justify-between ${i18n.language.startsWith('en') ? 'text-saffron' : 'text-royal-emerald/60 hover:text-royal-emerald'}`}
+                    className={`rounded-xl focus:bg-royal-emerald/5 font-bold uppercase text-[10px] cursor-pointer flex items-center justify-between ${i18n.language.startsWith('en') ? 'text-saffron' : 'text-royal-emerald'}`}
                   >
                     English
-                    {i18n.language.startsWith('en') && <span className="w-1 h-1 bg-saffron rounded-full ml-2" />}
-                  </button>
-                </div>
-              </div>
+                    {i18n.language.startsWith('en') && <Check className="w-3 h-3" />}
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
             </div>
 
             {user ? (
