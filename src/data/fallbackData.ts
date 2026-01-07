@@ -46,3 +46,68 @@ export const FALLBACK_TEAMS: Team[] = [
     { id: '23', name: 'DR Congo', code: 'COD', flag_url: 'https://flagcdn.com/cd.svg', group_name: 'Group F', points: 3, goal_difference: -2, created_at: new Date().toISOString() },
     { id: '24', name: 'Zambia', code: 'ZAM', flag_url: 'https://flagcdn.com/zm.svg', group_name: 'Group F', points: 0, goal_difference: -7, created_at: new Date().toISOString() },
 ];
+
+export interface Comment {
+    id: string;
+    content: string;
+    user_name: string;
+    user_id: string | null;
+    created_at: string;
+}
+
+export interface Post {
+    id: string;
+    title: string;
+    content: string;
+    image_url?: string;
+    user_name: string;
+    user_id: string | null;
+    likes: number;
+    dislikes: number;
+    created_at: string;
+    chat_comments: Comment[];
+}
+
+export const FALLBACK_POSTS: Post[] = [
+    {
+        id: 'p1',
+        title: "Predictions for Morocco vs Senegal?",
+        content: "Who do you think will win the opening match? Morocco looks strong at home, but Senegal's defense is legendary.",
+        user_name: "AtlasLion99",
+        user_id: null,
+        likes: 15,
+        dislikes: 2,
+        created_at: new Date(Date.now() - 3600000).toISOString(), // 1 hour ago
+        chat_comments: [
+            {
+                id: 'c1',
+                content: "I'm betting on a draw, 1-1.",
+                user_name: "TerangaFan",
+                user_id: null,
+                created_at: new Date(Date.now() - 1800000).toISOString()
+            }
+        ]
+    },
+    {
+        id: 'p2',
+        title: "The high-altitude training in Ifrane",
+        content: "Several teams are choosing Ifrane for their preparation. The altitude should help with stamina for the late-game sprints.",
+        user_name: "CoachAnalyst",
+        user_id: null,
+        likes: 24,
+        dislikes: 0,
+        created_at: new Date(Date.now() - 7200000).toISOString(), // 2 hours ago
+        chat_comments: []
+    },
+    {
+        id: 'p3',
+        title: "Tournament Infrastructure",
+        content: "The new stadiums in Rabat and Casablanca look absolutely world-class. Can't wait to see the atmosphere during the final!",
+        user_name: "StadiaHunter",
+        user_id: null,
+        likes: 42,
+        dislikes: 1,
+        created_at: new Date(Date.now() - 86400000).toISOString(), // 1 day ago
+        chat_comments: []
+    }
+];

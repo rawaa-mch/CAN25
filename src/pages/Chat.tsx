@@ -38,6 +38,8 @@ interface Post {
   chat_comments: Comment[];
 }
 
+import { FALLBACK_POSTS } from "@/data/fallbackData";
+
 const Chat = () => {
   const { user } = useAuth();
   const queryClient = useQueryClient();
@@ -81,7 +83,7 @@ const Chat = () => {
   const activeUserName = user ? (profile?.full_name || user.email?.split('@')[0] || "Anonymous") : localUserName;
 
   // Fetch posts
-  const { data: posts, isLoading } = useQuery({
+  const { data: posts, isLoading, error: queryError } = useQuery({
     queryKey: ["chat_posts"],
     queryFn: async () => {
       const { data, error } = await supabase
@@ -96,7 +98,11 @@ const Chat = () => {
         )
       })) as Post[];
     },
+    retry: 1,
   });
+
+  const displayPosts = queryError || (!isLoading && (!posts || posts.length === 0)) ? FALLBACK_POSTS : posts;
+
 
   // Mutations
   const shareMutation = useMutation({
@@ -201,11 +207,10 @@ const Chat = () => {
               </div>
               <Button
                 onClick={() => setIsFormOpen(!isFormOpen)}
-                className={`h-11 px-6 rounded-lg font-bold transition-all ${
-                  isFormOpen
-                    ? 'bg-blue-200 text-blue-700 hover:bg-blue-300 shadow-sm'
-                    : 'bg-blue-600 text-white hover:bg-blue-700 shadow-md ring-1 ring-blue-600/20 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-blue-600'
-                }`}
+                className={`h-11 px-6 rounded-lg font-bold transition-all ${isFormOpen
+                  ? 'bg-blue-200 text-blue-700 hover:bg-blue-300 shadow-sm'
+                  : 'bg-blue-600 text-white hover:bg-blue-700 shadow-md ring-1 ring-blue-600/20 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-blue-600'
+                  }`}
               >
                 {isFormOpen ? 'Cancel' : (
                   <>
@@ -297,15 +302,15 @@ const Chat = () => {
                       <div key={i} className="h-40 bg-white border border-slate-200 rounded-xl animate-pulse" />
                     ))}
                   </div>
-                ) : posts?.length === 0 ? (
+                ) : displayPosts?.length === 0 ? (
                   <div className="text-center py-20 bg-white border border-slate-200 rounded-xl">
                     <MessageSquare className="w-12 h-12 text-slate-200 mx-auto mb-4" />
                     <h3 className="text-lg font-bold text-slate-800">No active topics</h3>
                     <p className="text-slate-500 text-sm mt-1">Be the first to start the discussion.</p>
                   </div>
                 ) : (
-                  posts?.map((post) => (
-                     <Card key={post.id} className="border border-slate-200 shadow-sm rounded-xl overflow-hidden bg-white hover:border-royal-emerald/30 transition-all duration-300">
+                  displayPosts?.map((post) => (
+                    <Card key={post.id} className="border border-slate-200 shadow-sm rounded-xl overflow-hidden bg-white hover:border-royal-emerald/30 transition-all duration-300">
                       <div className="p-5">
                         {/* Post Header */}
                         <div className="flex items-center justify-between mb-4">
@@ -373,7 +378,7 @@ const Chat = () => {
                             {post.dislikes + (localReactions[post.id] === 'dislike' ? 1 : 0)}
                           </button>
 
-                          
+
                         </div>
 
                       </div>
@@ -398,14 +403,15 @@ const Chat = () => {
                 <CardContent className="p-4 space-y-2">
                   <div className="flex justify-between items-center text-xs p-2.5 bg-slate-50 rounded-lg">
                     <span className="text-slate-500 font-bold uppercase tracking-tighter">My Posts</span>
-                    <span className="font-bold text-slate-900">{posts?.filter(p => p.user_id === user?.id).length || 0}</span>
+                    <span className="font-bold text-slate-900">{displayPosts?.filter(p => p.user_id === user?.id).length || 0}</span>
                   </div>
                   <div className="flex justify-between items-center text-xs p-2.5 bg-slate-50 rounded-lg">
                     <span className="text-slate-500 font-bold uppercase tracking-tighter">Score Impact</span>
                     <span className="font-bold text-royal-emerald">
-                      {(posts?.filter(p => p.user_id === user?.id).reduce((acc, p) => acc + (p.likes || 0), 0) || 0) * 10} pts
+                      {(displayPosts?.filter(p => p.user_id === user?.id).reduce((acc, p) => acc + (p.likes || 0), 0) || 0) * 10} pts
                     </span>
                   </div>
+
                 </CardContent>
               </Card>
             </div>
