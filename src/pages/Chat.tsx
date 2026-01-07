@@ -127,6 +127,8 @@ const Chat = () => {
     localStorage.setItem('chat_local_posts', JSON.stringify(localPosts));
   }, [localPosts]);
 
+  const [processingReactions, setProcessingReactions] = useState<Record<string, boolean>>({});
+
   const reactionMutation = useMutation({
     mutationFn: async ({ postId, type, currentReaction }: { postId: string, type: 'like' | 'dislike', currentReaction: 'like' | 'dislike' | null }) => {
       if (!isSupabaseConfigured || !user) {
@@ -216,12 +218,14 @@ const Chat = () => {
 
       return { previousReactions, previousPosts };
     },
-    onSettled: () => {
+    onSettled: (data, error, variables) => {
       queryClient.invalidateQueries({ queryKey: ["user_reactions"] });
       queryClient.invalidateQueries({ queryKey: ["chat_posts"] });
+      setProcessingReactions(prev => ({ ...prev, [variables.postId]: false }));
     },
     onError: (err, newTodo, context: any) => {
       toast.error("Failed to update reaction");
+      setProcessingReactions(prev => ({ ...prev, [context.postId]: false }));
       if (context?.previousReactions) {
         queryClient.setQueryData(["user_reactions", user?.id], context.previousReactions);
       }
@@ -236,6 +240,11 @@ const Chat = () => {
       toast.error(t('auth.login_required') || "Please login to react");
       return;
     }
+
+    // Integrity Check: Prevent double clicks
+    if (processingReactions[postId]) return;
+    setProcessingReactions(prev => ({ ...prev, [postId]: true }));
+
     // Calculate current reaction HERE to be stable
     const currentReaction = getReaction(postId);
     reactionMutation.mutate({ postId, type, currentReaction });
