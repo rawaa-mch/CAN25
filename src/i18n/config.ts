@@ -58,6 +58,14 @@ const resources = {
                         "desc": "See your position on the leaderboard and compare scores."
                     }
                 }
+            },
+            "footer": {
+                "description": "The ultimate platform for Africa Cup of Nations 2025 predictions. Join the competition, challenge your friends, and experience the passion of African football.",
+                "navigation": "Navigation",
+                "our_team": "Our Team",
+                "contact": "Contact Us",
+                "rights": "CANGOAL. All privileges reserved.",
+                "developed_with": "Developed with"
             }
         }
     },
@@ -116,6 +124,14 @@ const resources = {
                         "desc": "Consultez votre position dans le classement et comparez vos scores."
                     }
                 }
+            },
+            "footer": {
+                "description": "La plateforme ultime pour les pronostics de la Coupe d'Afrique des Nations 2025. Rejoignez la compétition, défiez vos amis et vivez la passion du football africain.",
+                "navigation": "Navigation",
+                "our_team": "Notre Équipe",
+                "contact": "Contactez-nous",
+                "rights": "CANGOAL. Tous droits réservés.",
+                "developed_with": "Développé avec"
             }
         }
     },
@@ -174,6 +190,14 @@ const resources = {
                         "desc": "شاهد ترتيبك و قارن نقاطك مع الآخرين."
                     }
                 }
+            },
+            "footer": {
+                "description": "المنصة الأمثل لتوقعات كأس الأمم الأفريقية 2025. انضم للمنافسة، تحدى أصدقائك وعش شغف الكرة الأفريقية.",
+                "navigation": "التنقل",
+                "our_team": "فريقنا",
+                "contact": "اتصل بنا",
+                "rights": "CANGOAL. جميع الحقوق محفوظة.",
+                "developed_with": "تم التطوير بـ"
             }
         }
     }
