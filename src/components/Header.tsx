@@ -117,6 +117,13 @@ export function Header() {
                     English
                     {i18n.language.startsWith('en') && <Check className="w-3 h-3" />}
                   </DropdownMenuItem>
+                  <DropdownMenuItem
+                    onClick={() => changeLanguage('ar')}
+                    className={`rounded-xl focus:bg-royal-emerald/5 font-bold uppercase text-[10px] cursor-pointer flex items-center justify-between ${i18n.language === 'ar' ? 'text-saffron' : 'text-royal-emerald'}`}
+                  >
+                    العربية
+                    {i18n.language === 'ar' && <Check className="w-3 h-3" />}
+                  </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
             </div>
@@ -287,6 +294,12 @@ export function Header() {
                     className={`text-[11px] font-bold uppercase ${i18n.language.startsWith('en') ? 'text-saffron' : 'text-royal-emerald hover:text-saffron'}`}
                   >
                     EN
+                  </button>
+                  <button
+                    onClick={() => changeLanguage('ar')}
+                    className={`text-[11px] font-bold uppercase ${i18n.language === 'ar' ? 'text-saffron' : 'text-royal-emerald hover:text-saffron'}`}
+                  >
+                    AR
                   </button>
                 </div>
               </div>
