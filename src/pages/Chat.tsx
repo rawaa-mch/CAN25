@@ -8,14 +8,8 @@ import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import {
   MessageSquare, Send, Heart, ThumbsDown,
   Trash2, Edit2, ImageIcon, Users,
-  Calendar, Plus, Globe, ChevronDown
+  Calendar, Plus, Globe
 } from "lucide-react";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
@@ -99,15 +93,19 @@ const Chat = () => {
   const [translatedContent, setTranslatedContent] = useState<Record<string, string>>({});
   const [isTranslating, setIsTranslating] = useState<Record<string, boolean>>({});
 
-  const handleTranslate = async (id: string, text: string, lang: 'fr' | 'ar') => {
+  const handleTranslate = async (id: string, text: string) => {
+    // Determine target language from current app language
+    const targetLang = i18n.language.startsWith('ar') ? 'ar' : (i18n.language.startsWith('fr') ? 'fr' : 'en');
+
     if (translatedContent[id]) {
-      // If already translated, allow re-translating if different, or we can add logic later.
-      // For now, simple override.
+      // Toggle off if already showing translation
+      handleRevert(id);
+      return;
     }
 
     setIsTranslating(prev => ({ ...prev, [id]: true }));
     try {
-      const translated = await translateText(text, lang);
+      const translated = await translateText(text, targetLang);
       setTranslatedContent(prev => ({ ...prev, [id]: translated }));
     } catch (error) {
       toast.error("Translation failed");
@@ -616,42 +614,21 @@ const Chat = () => {
                               {translatedContent[`content-${post.id}`] || post.content}
                             </p>
                             <div className="flex gap-2">
-                              <DropdownMenu>
-                                <DropdownMenuTrigger asChild>
-                                  <Button
-                                    variant="ghost"
-                                    size="sm"
-                                    className="text-xs h-7 px-2 text-slate-400 hover:text-royal-emerald"
-                                    disabled={isTranslating[`title-${post.id}`]}
-                                  >
-                                    <Globe className="w-3 h-3 mr-1" />
-                                    {isTranslating[`title-${post.id}`] ? "..." : (translatedContent[`title-${post.id}`] ? "Traduire" : "Traduire")}
-                                    <ChevronDown className="w-3 h-3 ml-1 opacity-50" />
-                                  </Button>
-                                </DropdownMenuTrigger>
-                                <DropdownMenuContent align="start">
-                                  <DropdownMenuItem onClick={() => {
-                                    handleTranslate(`title-${post.id}`, post.title, 'fr');
-                                    handleTranslate(`content-${post.id}`, post.content, 'fr');
-                                  }}>
-                                    Français
-                                  </DropdownMenuItem>
-                                  <DropdownMenuItem onClick={() => {
-                                    handleTranslate(`title-${post.id}`, post.title, 'ar');
-                                    handleTranslate(`content-${post.id}`, post.content, 'ar');
-                                  }}>
-                                    العربية (Arabe)
-                                  </DropdownMenuItem>
-                                  {translatedContent[`title-${post.id}`] && (
-                                    <DropdownMenuItem onClick={() => {
-                                      handleRevert(`title-${post.id}`);
-                                      handleRevert(`content-${post.id}`);
-                                    }}>
-                                      Voir l'original
-                                    </DropdownMenuItem>
-                                  )}
-                                </DropdownMenuContent>
-                              </DropdownMenu>
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                onClick={() => {
+                                  handleTranslate(`title-${post.id}`, post.title);
+                                  handleTranslate(`content-${post.id}`, post.content);
+                                }}
+                                className="text-xs h-7 px-2 text-slate-400 hover:text-royal-emerald hover:bg-emerald-50"
+                                disabled={isTranslating[`title-${post.id}`]}
+                              >
+                                <Globe className="w-3 h-3 mr-1" />
+                                {isTranslating[`title-${post.id}`]
+                                  ? "..."
+                                  : (translatedContent[`title-${post.id}`] ? "Voir l'original" : "Traduire")}
+                              </Button>
                             </div>
                           </div>
                           {post.image_url && (
@@ -665,9 +642,11 @@ const Chat = () => {
                         <div className="flex items-center gap-4 pt-4 border-t border-slate-50">
                           <button
                             onClick={() => handleReaction(post.id, 'like')}
-                            className={`flex items-center gap-1.5 text-xs font-bold transition-colors
-                              ${getReaction(post.id) === 'like' ? 'text-royal-emerald bg-royal-emerald/10' : 'text-slate-400 hover:text-royal-emerald hover:bg-slate-50'}
-                              rounded-md px-2 py-1`}
+                            className={`flex items-center gap-1.5 text-xs font-bold transition-all active:scale-95 duration-200
+                              ${getReaction(post.id) === 'like'
+                                ? 'text-green-600 bg-green-50 shadow-sm border border-green-100 ring-1 ring-green-500/20'
+                                : 'text-slate-500 hover:text-green-600 hover:bg-green-50/50'}
+                              rounded-md px-3 py-1.5`}
                           >
                             <Heart className={`w-4 h-4 ${getReaction(post.id) === 'like' ? 'fill-current' : ''}`} />
                             {post.likes}
@@ -675,11 +654,13 @@ const Chat = () => {
 
                           <button
                             onClick={() => handleReaction(post.id, 'dislike')}
-                            className={`flex items-center gap-1.5 text-xs font-bold transition-colors
-                              ${getReaction(post.id) === 'dislike' ? 'text-red-500 bg-red-500/10' : 'text-slate-400 hover:text-red-500 hover:bg-slate-50'}
-                              rounded-md px-2 py-1`}
+                            className={`flex items-center gap-1.5 text-xs font-bold transition-all active:scale-95 duration-200
+                              ${getReaction(post.id) === 'dislike'
+                                ? 'text-red-500 bg-red-50 shadow-sm border border-red-100 ring-1 ring-red-500/20'
+                                : 'text-slate-500 hover:text-red-500 hover:bg-red-50/50'}
+                              rounded-md px-3 py-1.5`}
                           >
-                            <ThumbsDown className="w-4 h-4" />
+                            <ThumbsDown className={`w-4 h-4 ${getReaction(post.id) === 'dislike' ? 'fill-current' : ''}`} />
                             {post.dislikes}
                           </button>
 
@@ -719,31 +700,17 @@ const Chat = () => {
                                     <p className="text-sm text-slate-600 font-medium break-words">
                                       {translatedContent[`comment-${comment.id}`] || comment.content}
                                     </p>
-                                    <div className="flex gap-2">
-                                      <DropdownMenu>
-                                        <DropdownMenuTrigger asChild>
-                                          <button
-                                            className="text-[10px] text-slate-400 hover:text-royal-emerald font-bold mt-1 flex items-center gap-1"
-                                            disabled={isTranslating[`comment-${comment.id}`]}
-                                          >
-                                            <Globe className="w-3 h-3" />
-                                            {isTranslating[`comment-${comment.id}`] ? "..." : "Traduire"}
-                                          </button>
-                                        </DropdownMenuTrigger>
-                                        <DropdownMenuContent align="start">
-                                          <DropdownMenuItem onClick={() => handleTranslate(`comment-${comment.id}`, comment.content, 'fr')}>
-                                            Français
-                                          </DropdownMenuItem>
-                                          <DropdownMenuItem onClick={() => handleTranslate(`comment-${comment.id}`, comment.content, 'ar')}>
-                                            العربية (Arabe)
-                                          </DropdownMenuItem>
-                                          {translatedContent[`comment-${comment.id}`] && (
-                                            <DropdownMenuItem onClick={() => handleRevert(`comment-${comment.id}`)}>
-                                              Voir l'original
-                                            </DropdownMenuItem>
-                                          )}
-                                        </DropdownMenuContent>
-                                      </DropdownMenu>
+                                    <div className="flex gap-2 mt-1">
+                                      <button
+                                        className="text-[10px] text-slate-400 hover:text-royal-emerald font-bold flex items-center gap-1"
+                                        disabled={isTranslating[`comment-${comment.id}`]}
+                                        onClick={() => handleTranslate(`comment-${comment.id}`, comment.content)}
+                                      >
+                                        <Globe className="w-3 h-3" />
+                                        {isTranslating[`comment-${comment.id}`]
+                                          ? "..."
+                                          : (translatedContent[`comment-${comment.id}`] ? "Voir l'original" : "Traduire")}
+                                      </button>
                                     </div>
                                   </div>
                                 </div>
