@@ -220,13 +220,13 @@ const Bracket = () => {
               </div>
 
               <h1 className="text-3xl md:text-7xl font-bold mb-4 md:mb-6 tracking-tight">
-                <span className="bg-gradient-to-r from-primary to-primary/70 bg-clip-text text-transparent">
-                  CANGOAL
-                </span>
-                <br />
-                <span className="text-gray-900">{t('bracket.title')}</span>
-              </h1>
+                 {/* Main Title */}
+      
 
+               <h1 className="font-royal text-6xl md:text-8xl lg:text-9xl ">
+                <span className="text-royal-emerald drop-shadow-sm">CAN</span><span className="text-transparent bg-clip-text bg-gradient-saffron text-glow-saffron">GOAL</span>
+               </h1>
+              </h1> 
               <p className="text-base md:text-xl text-gray-600 max-w-2xl mx-auto leading-relaxed px-4">
                 {t('bracket.subtitle')}
               </p>
