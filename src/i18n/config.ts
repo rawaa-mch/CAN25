@@ -25,7 +25,8 @@ const resources = {
                 "welcome": "Welcome",
                 "language": "Language",
                 "time_remaining": "Time Remaining",
-                "days": "days"
+                "days": "days",
+                "online": "Online"
             },
             "hero": {
                 "badge": "Africa Cup of Nations",
@@ -93,8 +94,8 @@ const resources = {
                 "placeholder_title": "What's on your mind?",
                 "placeholder_content": "Share your thoughts...",
                 "media": "Photo/Video",
-                "MY_POSTS": "My Posts",
-                "SCORE_IMPACT": "Score Impact",
+                "my_posts": "My Posts",
+                "score_impact": "Score Impact",
                 "publishing": "Publishing...",
                 "add_comment": "Add a comment...",
                 "no_topics": "No discussions yet",
@@ -131,7 +132,8 @@ const resources = {
                 "welcome": "Bienvenue",
                 "language": "Langue",
                 "time_remaining": "Temps Restant",
-                "days": "jours"
+                "days": "jours",
+                "online": "En ligne"
             },
             "hero": {
                 "badge": "Coupe d'Afrique des Nations",
@@ -199,8 +201,8 @@ const resources = {
                 "placeholder_title": "À quoi pensez-vous ?",
                 "placeholder_content": "Partagez vos pensées...",
                 "media": "Photo/Vidéo",
-                "MY_POSTS": "Mes Publications",
-                "SCORE_IMPACT": "Impact sur le Score",
+                "my_posts": "Mes Publications",
+                "score_impact": "Impact sur le Score",
                 "publishing": "Publication...",
                 "add_comment": "Ajouter un commentaire...",
                 "no_topics": "Aucune discussion pour le moment",
@@ -237,7 +239,8 @@ const resources = {
                 "welcome": "أهلاً بك",
                 "language": "اللغة",
                 "time_remaining": "الوقت المتبقي",
-                "days": "أيام"
+                "days": "أيام",
+                "online": "متصل"
             },
             "hero": {
                 "badge": "كأس الأمم الأفريقية",
@@ -305,8 +308,8 @@ const resources = {
                 "placeholder_title": "ماذا تفكر؟",
                 "placeholder_content": "شارك أفكارك...",
                 "media": "صورة/فيديو",
-                "MY_POSTS": "منشوراتي",
-                "SCORE_IMPACT": "تأثير النقاط",
+                "my_posts": "منشوراتي",
+                "score_impact": "تأثير النقاط",
                 "publishing": "جاري النشر...",
                 "add_comment": "أضف تعليق...",
                 "no_topics": "لا توجد مناقشات بعد",
