@@ -66,6 +66,24 @@ const resources = {
                 "contact": "Contact Us",
                 "rights": "CANGOAL. All privileges reserved.",
                 "developed_with": "Developed with"
+            },
+            "bracket": {
+                "title": "Tournament Bracket",
+                "subtitle": "Predict the path to glory",
+                "download_diagram": "Download Diagram",
+                "how_to_play": "How to Play",
+                "step1": "Predict Winners",
+                "step2": "Save Bracket",
+                "step3": "Share Results",
+                "swipe_hint": "Swipe to see full bracket",
+                "save_predictions": "Save Predictions",
+                "view_my": "View My Bracket"
+            },
+            "groups": {
+                "title": "Groups",
+                "subtitle": "The path to the knockout stage",
+                "loading": "Loading groups...",
+                "overview": "Overview"
             }
         }
     },
@@ -132,6 +150,24 @@ const resources = {
                 "contact": "Contactez-nous",
                 "rights": "CANGOAL. Tous droits réservés.",
                 "developed_with": "Développé avec"
+            },
+            "bracket": {
+                "title": "Tableau Final",
+                "subtitle": "Pronostiquez le parcours vers la gloire",
+                "download_diagram": "Télécharger le Diagramme",
+                "how_to_play": "Comment Jouer",
+                "step1": "Pronostiquez les Vainqueurs",
+                "step2": "Sauvegarder le Tableau",
+                "step3": "Partager les Résultats",
+                "swipe_hint": "Glissez pour voir tout le tableau",
+                "save_predictions": "Sauvegarder les Pronostics",
+                "view_my": "Voir Mon Tableau"
+            },
+            "groups": {
+                "title": "Groupes",
+                "subtitle": "Le chemin vers la phase éliminatoire",
+                "loading": "Chargement des groupes...",
+                "overview": "Aperçu"
             }
         }
     },
@@ -198,6 +234,24 @@ const resources = {
                 "contact": "اتصل بنا",
                 "rights": "CANGOAL. جميع الحقوق محفوظة.",
                 "developed_with": "تم التطوير بـ"
+            },
+            "bracket": {
+                "title": "جدول البطولة",
+                "subtitle": "توقع مسار خروج المغلوب نحو المجد",
+                "download_diagram": "تحميل المخطط",
+                "how_to_play": "كيف تلعب",
+                "step1": "توقع الفائزين",
+                "step2": "حفظ الجدول",
+                "step3": "شارك النتائج",
+                "swipe_hint": "اسحب لرؤية الجدول كاملاً",
+                "save_predictions": "حفظ التوقعات",
+                "view_my": "عرض جدولي"
+            },
+            "groups": {
+                "title": "المجموعات",
+                "subtitle": "الطريق إلى مرحلة خروج المغلوب",
+                "loading": "جاري تحميل المجموعات...",
+                "overview": "نظرة عامة"
             }
         }
     }
