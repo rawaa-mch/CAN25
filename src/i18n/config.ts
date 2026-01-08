@@ -23,7 +23,9 @@ const resources = {
                 "cancel": "Cancel",
                 "join_elite": "Join the Elite",
                 "welcome": "Welcome",
-                "language": "Language"
+                "language": "Language",
+                "time_remaining": "Time Remaining",
+                "days": "days"
             },
             "hero": {
                 "badge": "Africa Cup of Nations",
@@ -77,13 +79,33 @@ const resources = {
                 "step3": "Share Results",
                 "swipe_hint": "Swipe to see full bracket",
                 "save_predictions": "Save Predictions",
-                "view_my": "View My Bracket"
+                "view_my": "View My Bracket",
+                "your_prediction": "Your Prediction",
+                "active_predictors": "Active Predictors"
             },
             "groups": {
                 "title": "Groups",
                 "subtitle": "The path to the knockout stage",
                 "loading": "Loading groups...",
                 "overview": "Overview"
+            },
+            "chat": {
+                "placeholder_title": "What's on your mind?",
+                "placeholder_content": "Share your thoughts...",
+                "media": "Photo/Video",
+                "MY_POSTS": "My Posts",
+                "SCORE_IMPACT": "Score Impact",
+                "publishing": "Publishing...",
+                "add_comment": "Add a comment...",
+                "no_topics": "No discussions yet",
+                "be_the_first": "Be the first to start a conversation!"
+            },
+            "ai": {
+                "settings": "AI Settings",
+                "api_key": "API Key",
+                "placeholder_key": "Enter your API key",
+                "storage_note": "Your API key is stored locally in your browser",
+                "save_key": "Save Key"
             }
         }
     },
@@ -107,7 +129,9 @@ const resources = {
                 "cancel": "Annuler",
                 "join_elite": "Rejoindre l'Élite",
                 "welcome": "Bienvenue",
-                "language": "Langue"
+                "language": "Langue",
+                "time_remaining": "Temps Restant",
+                "days": "jours"
             },
             "hero": {
                 "badge": "Coupe d'Afrique des Nations",
@@ -161,13 +185,33 @@ const resources = {
                 "step3": "Partager les Résultats",
                 "swipe_hint": "Glissez pour voir tout le tableau",
                 "save_predictions": "Sauvegarder les Pronostics",
-                "view_my": "Voir Mon Tableau"
+                "view_my": "Voir Mon Tableau",
+                "your_prediction": "Votre Pronostic",
+                "active_predictors": "Pronostiqueurs Actifs"
             },
             "groups": {
                 "title": "Groupes",
                 "subtitle": "Le chemin vers la phase éliminatoire",
                 "loading": "Chargement des groupes...",
                 "overview": "Aperçu"
+            },
+            "chat": {
+                "placeholder_title": "À quoi pensez-vous ?",
+                "placeholder_content": "Partagez vos pensées...",
+                "media": "Photo/Vidéo",
+                "MY_POSTS": "Mes Publications",
+                "SCORE_IMPACT": "Impact sur le Score",
+                "publishing": "Publication...",
+                "add_comment": "Ajouter un commentaire...",
+                "no_topics": "Aucune discussion pour le moment",
+                "be_the_first": "Soyez le premier à lancer une conversation !"
+            },
+            "ai": {
+                "settings": "Paramètres IA",
+                "api_key": "Clé API",
+                "placeholder_key": "Entrez votre clé API",
+                "storage_note": "Votre clé API est stockée localement dans votre navigateur",
+                "save_key": "Sauvegarder la Clé"
             }
         }
     },
@@ -191,7 +235,9 @@ const resources = {
                 "cancel": "إلغاء",
                 "join_elite": "انضم للنخبة",
                 "welcome": "أهلاً بك",
-                "language": "اللغة"
+                "language": "اللغة",
+                "time_remaining": "الوقت المتبقي",
+                "days": "أيام"
             },
             "hero": {
                 "badge": "كأس الأمم الأفريقية",
@@ -245,13 +291,33 @@ const resources = {
                 "step3": "شارك النتائج",
                 "swipe_hint": "اسحب لرؤية الجدول كاملاً",
                 "save_predictions": "حفظ التوقعات",
-                "view_my": "عرض جدولي"
+                "view_my": "عرض جدولي",
+                "your_prediction": "توقعك",
+                "active_predictors": "المتوقعون النشطون"
             },
             "groups": {
                 "title": "المجموعات",
                 "subtitle": "الطريق إلى مرحلة خروج المغلوب",
                 "loading": "جاري تحميل المجموعات...",
                 "overview": "نظرة عامة"
+            },
+            "chat": {
+                "placeholder_title": "ماذا تفكر؟",
+                "placeholder_content": "شارك أفكارك...",
+                "media": "صورة/فيديو",
+                "MY_POSTS": "منشوراتي",
+                "SCORE_IMPACT": "تأثير النقاط",
+                "publishing": "جاري النشر...",
+                "add_comment": "أضف تعليق...",
+                "no_topics": "لا توجد مناقشات بعد",
+                "be_the_first": "كن أول من يبدأ محادثة!"
+            },
+            "ai": {
+                "settings": "إعدادات الذكاء الاصطناعي",
+                "api_key": "مفتاح API",
+                "placeholder_key": "أدخل مفتاح API",
+                "storage_note": "يتم تخزين مفتاح API محليًا في متصفحك",
+                "save_key": "حفظ المفتاح"
             }
         }
     }
