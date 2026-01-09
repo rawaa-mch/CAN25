@@ -29,6 +29,7 @@ export function AIChatOverlay() {
     const [input, setInput] = useState("");
     const [isLoading, setIsLoading] = useState(false);
     const [agent, setAgent] = useState<AIAgent | null>(null);
+    const [showPrompt, setShowPrompt] = useState(false);
     const scrollRef = useRef<HTMLDivElement>(null);
 
     const location = useLocation();
@@ -46,6 +47,18 @@ export function AIChatOverlay() {
             setAgent(new AIAgent(keyToUse));
         }
     }, []);
+
+    // Periodic Prompt Logic
+    useEffect(() => {
+        const interval = setInterval(() => {
+            if (!isOpen) {
+                setShowPrompt(true);
+                setTimeout(() => setShowPrompt(false), 4000);
+            }
+        }, 10000);
+
+        return () => clearInterval(interval);
+    }, [isOpen]);
 
     // Auto-scroll to bottom of chat
     useEffect(() => {
@@ -122,16 +135,29 @@ export function AIChatOverlay() {
 
     if (!isOpen) {
         return (
-            <Button
-                onClick={() => setIsOpen(true)}
-                className="fixed bottom-4 right-4 h-24 w-24 p-0 z-50 bg-transparent hover:bg-transparent transition-all duration-300 hover:scale-110 border-none shadow-none"
-            >
-                <img
-                    src="/chatbot_icon_new.png"
-                    alt="Chat"
-                    className="h-full w-full object-contain drop-shadow-2xl"
-                />
-            </Button>
+            <div className="fixed bottom-4 right-4 z-50 flex flex-col items-center">
+                {/* Speech Bubble */}
+                {showPrompt && (
+                    <div className="mb-2 animate-in fade-in zoom-in slide-in-from-bottom-2 duration-300">
+                        <div className="bg-white text-royal-emerald px-4 py-2 rounded-2xl shadow-xl text-xs font-black uppercase tracking-tight border border-saffron/20 relative">
+                            Vous pouvez me questionner
+                            <div className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-2 h-2 bg-white rotate-45 border-r border-b border-saffron/20" />
+                        </div>
+                    </div>
+                )}
+
+                <Button
+                    onClick={() => setIsOpen(true)}
+                    className="h-24 w-24 p-0 bg-transparent hover:bg-transparent transition-all duration-300 hover:scale-110 border-none shadow-none group relative"
+                >
+                    <div className="absolute inset-0 bg-saffron/5 rounded-full blur-2xl opacity-0 group-hover:opacity-100 transition-opacity" />
+                    <img
+                        src="/chatbot_icon_new.png"
+                        alt="Chat"
+                        className="h-full w-full object-contain drop-shadow-2xl relative z-10"
+                    />
+                </Button>
+            </div>
         );
     }
 
