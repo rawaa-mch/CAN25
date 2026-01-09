@@ -1,4 +1,5 @@
 import { Tables } from "@/integrations/supabase/types";
+import { useTranslation } from "react-i18next";
 
 interface BracketMatchProps {
   team1?: Tables<"teams"> | null;
@@ -29,6 +30,7 @@ export const BracketMatch = ({
   isPredicted1,
   isPredicted2
 }: BracketMatchProps) => {
+  const { t } = useTranslation();
   return (
     <div className="bg-white/95 backdrop-blur-sm min-w-[160px] sm:min-w-[220px] md:min-w-[280px] rounded-xl sm:rounded-2xl border border-gray-200 shadow-md overflow-hidden transition-all duration-300 hover:shadow-lg hover:border-gray-300">
 
@@ -80,7 +82,7 @@ export const BracketMatch = ({
           </>
         ) : (
           <div className="flex items-center justify-center flex-1 py-2">
-            <span className="text-xs text-gray-300 uppercase tracking-wider font-medium">TBD</span>
+            <span className="text-xs text-gray-300 uppercase tracking-wider font-medium">{t('bracket.tbd_short')}</span>
           </div>
         )}
       </div>
@@ -136,7 +138,7 @@ export const BracketMatch = ({
           </>
         ) : (
           <div className="flex items-center justify-center flex-1 py-2">
-            <span className="text-xs text-gray-300 uppercase tracking-wider font-medium">TBD</span>
+            <span className="text-xs text-gray-300 uppercase tracking-wider font-medium">{t('bracket.tbd_short')}</span>
           </div>
         )}
       </div>

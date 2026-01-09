@@ -46,7 +46,7 @@ const Bracket = () => {
     if (!target) {
       toast({
         variant: "destructive",
-        title: "Error",
+        title: t('common.error'),
         description: "Bracket element not found"
       });
       return;
@@ -56,8 +56,8 @@ const Bracket = () => {
       setIsCapturing(true);
 
       toast({
-        title: "Preparing image...",
-        description: "Please wait while your bracket is generated."
+        title: t('bracket.share.preparing'),
+        description: t('bracket.share.preparing_desc')
       });
 
       // Ensure the bracket is visible before capture
@@ -98,8 +98,8 @@ const Bracket = () => {
       setIsShareOpen(true);
 
       toast({
-        title: "Image ready",
-        description: "Choose an option to share or download."
+        title: t('bracket.share.ready'),
+        description: t('bracket.share.ready_desc')
       });
 
       setIsCapturing(false);
@@ -108,8 +108,8 @@ const Bracket = () => {
       console.error("Capture error:", error);
       toast({
         variant: "destructive",
-        title: "Share error",
-        description: "Unable to generate the image. Please try again or use a screenshot."
+        title: t('bracket.share.error'),
+        description: t('bracket.share.error_desc')
       });
     } finally {
       setIsCapturing(false);
@@ -125,14 +125,14 @@ const Bracket = () => {
       const nav = navigator as unknown as { canShare?: (d?: ShareData) => boolean; share?: (d?: ShareData) => Promise<void> };
 
       if (typeof nav.canShare === 'function' && nav.canShare({ files: [file] })) {
-        await nav.share?.({ files: [file], title: 'My CANGOAL bracket', text: 'Here are my predictions!' });
-        toast({ title: "Shared!" });
+        await nav.share?.({ files: [file], title: t('bracket.share.title'), text: 'Here are my predictions!' });
+        toast({ title: t('bracket.share.shared') });
       } else {
-        toast({ title: "Sharing not supported", description: "Please use download instead." });
+        toast({ title: t('bracket.share.not_supported'), description: t('bracket.share.not_supported_desc') });
       }
     } catch (err) {
       console.error(err);
-      toast({ variant: "destructive", title: "Share error" });
+      toast({ variant: "destructive", title: t('bracket.share.error') });
     }
   };
 
@@ -146,10 +146,10 @@ const Bracket = () => {
       const item = new ClipboardItemCtor({ ['image/png']: previewBlob });
       // navigator.clipboard.write expects ClipboardItem[] in browsers that support this
       await (navigator.clipboard.write as unknown as (items: unknown[]) => Promise<void>)([item]);
-      toast({ title: "Image copied" });
+      toast({ title: t('bracket.share.copied') });
     } catch (err) {
       console.error(err);
-      toast({ variant: "destructive", title: "Unable to copy the image" });
+      toast({ variant: "destructive", title: t('bracket.share.copy_error') });
     }
   };
 
@@ -220,13 +220,13 @@ const Bracket = () => {
               </div>
 
               <h1 className="text-3xl md:text-7xl font-bold mb-4 md:mb-6 tracking-tight">
-                 {/* Main Title */}
-      
+                {/* Main Title */}
 
-               <h1 className="font-royal text-6xl md:text-8xl lg:text-9xl ">
-                <span className="text-royal-emerald drop-shadow-sm">CAN</span><span className="text-transparent bg-clip-text bg-gradient-saffron text-glow-saffron">GOAL</span>
-               </h1>
-              </h1> 
+
+                <h1 className="font-royal text-6xl md:text-8xl lg:text-9xl ">
+                  <span className="text-royal-emerald drop-shadow-sm">CAN</span><span className="text-transparent bg-clip-text bg-gradient-saffron text-glow-saffron">GOAL</span>
+                </h1>
+              </h1>
               <p className="text-base md:text-xl text-gray-600 max-w-2xl mx-auto leading-relaxed px-4">
                 {t('bracket.subtitle')}
               </p>
@@ -408,19 +408,19 @@ const Bracket = () => {
                 <div className="w-32 h-24 bg-gray-100 rounded flex items-center justify-center text-sm">Preview</div>
               )}
               <div className="flex-1">
-                <h4 className="font-semibold">Share your bracket</h4>
-                <p className="text-sm text-gray-500">Choose an option below</p>
+                <h4 className="font-semibold">{t('bracket.share.title')}</h4>
+                <p className="text-sm text-gray-500">{t('bracket.share.subtitle')}</p>
               </div>
             </div>
 
             <div className="mt-4 grid grid-cols-1 gap-2">
-              <Button onClick={handleNativeShare} className="w-full">Native Share</Button>
-              <Button onClick={downloadPreview} className="w-full">Download</Button>
-              <Button onClick={copyImageToClipboard} className="w-full">Copy Image</Button>
+              <Button onClick={handleNativeShare} className="w-full">{t('bracket.share.native')}</Button>
+              <Button onClick={downloadPreview} className="w-full">{t('bracket.share.download')}</Button>
+              <Button onClick={copyImageToClipboard} className="w-full">{t('bracket.share.copy')}</Button>
             </div>
 
             <div className="mt-3 text-right">
-              <Button variant="ghost" onClick={closeShareModal}>Close</Button>
+              <Button variant="ghost" onClick={closeShareModal}>{t('bracket.share.close')}</Button>
             </div>
           </div>
         </div>
@@ -462,7 +462,7 @@ const Bracket = () => {
             ) : (
               <Download className="w-5 h-5 mr-2" />
             )}
-            {isCapturing ? t('bracket.generating') : "Share"}
+            {isCapturing ? t('bracket.generating') : t('bracket.share.button')}
           </Button>
         </div>
       )}

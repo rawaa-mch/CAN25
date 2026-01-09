@@ -564,7 +564,7 @@ const Chat = () => {
                         </div>
                         <Button
                           disabled={shareMutation.isPending || !title.trim() || !content.trim()}
-                          className="h-10 px-6 bg-royal-emerald text-white hover:bg-emerald-700 rounded-full font-bold shadow-md transition-all active:scale-95"
+                          className="h-10 px-6 bg-green-500 text-black hover:bg-green-700 rounded-full font-bold shadow-md transition-all active:scale-95"
                         >
                           {shareMutation.isPending ? t('chat.publishing') : (editingId ? t('common.save') : "Post")}
                           <SendHorizontal className="w-4 h-4 ml-2" />
@@ -765,7 +765,7 @@ const Chat = () => {
                                         disabled={isTranslating[`comment-${comment.id}`]}
                                         onClick={() => handleTranslate(`comment-${comment.id}`, comment.content)}
                                       >
-                                        <Globe className="w-3 h-3" />
+                                       
                                         {isTranslating[`comment-${comment.id}`]
                                           ? "..."
                                           : (translatedContent[`comment-${comment.id}`] ? "Voir l'original" : "Traduire")}

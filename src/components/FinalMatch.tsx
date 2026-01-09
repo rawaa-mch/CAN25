@@ -1,5 +1,6 @@
 import { Tables } from "@/integrations/supabase/types";
 import { Trophy } from "lucide-react";
+import { useTranslation } from "react-i18next";
 
 interface FinalMatchProps {
     team1: Tables<"teams"> | null;
@@ -24,6 +25,7 @@ export const FinalMatch = ({
     onScore2Change,
     predictedWinner
 }: FinalMatchProps) => {
+    const { t } = useTranslation();
     const handleTeamClick = (team: Tables<"teams"> | null) => {
         if (team) {
             onPredict(team);
@@ -40,7 +42,7 @@ export const FinalMatch = ({
                     <div className="inline-flex items-center gap-2 sm:gap-3 mb-2">
                         <Trophy className="w-5 h-5 sm:w-6 sm:h-6 text-amber-500" />
                         <h3 className="font-bold text-lg sm:text-xl uppercase tracking-wider text-gray-800">
-                            Final
+                            {t('bracket.final_label')}
                         </h3>
                     </div>
                 </div>
@@ -77,10 +79,10 @@ export const FinalMatch = ({
                                 )}
                                 <div className="flex flex-col">
                                     <span className="font-bold text-xl sm:text-2xl text-gray-900 uppercase">
-                                        {team1?.code || "TBD"}
+                                        {team1?.code || t('bracket.tbd_short')}
                                     </span>
                                     <span className="text-[10px] sm:text-xs text-gray-500 uppercase tracking-wide font-medium">
-                                        {team1?.name || "To be decided"}
+                                        {team1?.name || t('bracket.tbd')}
                                     </span>
                                 </div>
                             </div>
@@ -135,10 +137,10 @@ export const FinalMatch = ({
                                 )}
                                 <div className="flex flex-col">
                                     <span className="font-bold text-xl sm:text-2xl text-gray-900 uppercase">
-                                        {team2?.code || "TBD"}
+                                        {team2?.code || t('bracket.tbd_short')}
                                     </span>
                                     <span className="text-[10px] sm:text-xs text-gray-500 uppercase tracking-wide font-medium">
-                                        {team2?.name || "To be decided"}
+                                        {team2?.name || t('bracket.tbd')}
                                     </span>
                                 </div>
                             </div>

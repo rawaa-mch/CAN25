@@ -82,7 +82,40 @@ const resources = {
                 "save_predictions": "Save Predictions",
                 "view_my": "View My Bracket",
                 "your_prediction": "Your Prediction",
-                "active_predictors": "Active Predictors"
+                "active_predictors": "Active Predictors",
+                "not_set": "Not Set",
+                "saving": "Saving...",
+                "signin_to_predict": "Sign in to Predict",
+                "generating": "Generating...",
+                "final_bracket": "Final Bracket",
+                "knockout_stage": "CANGOAL Knockout Stage",
+                "r16": "Round of 16",
+                "qf": "Quarter Finals",
+                "sf": "Semi Finals",
+                "final_label": "Final",
+                "champion_2025": "Champion 2025",
+                "tbd": "To be decided",
+                "tbd_short": "TBD",
+                "share": {
+                    "preparing": "Preparing image...",
+                    "preparing_desc": "Please wait while your bracket is generated.",
+                    "ready": "Image ready",
+                    "ready_desc": "Choose an option to share or download.",
+                    "error": "Share error",
+                    "error_desc": "Unable to generate the image. Please try again or use a screenshot.",
+                    "shared": "Shared!",
+                    "not_supported": "Sharing not supported",
+                    "not_supported_desc": "Please use download instead.",
+                    "copied": "Image copied",
+                    "copy_error": "Unable to copy the image",
+                    "title": "Share your bracket",
+                    "subtitle": "Choose an option below",
+                    "native": "Native Share",
+                    "download": "Download",
+                    "copy": "Copy Image",
+                    "close": "Close",
+                    "button": "Share"
+                }
             },
             "groups": {
                 "title": "Groups",
@@ -107,6 +140,13 @@ const resources = {
                 "placeholder_key": "Enter your API key",
                 "storage_note": "Your API key is stored locally in your browser",
                 "save_key": "Save Key"
+            },
+            "portfolios": {
+                "title": "GOLDEN TEAM",
+                "subtitle": "Meet the brilliant developers behind the CANGOAL platform",
+                "role": "Fullstack Developer",
+                "card_status": "OFFICIAL MEMBER",
+                "ball_click": "CLICK THE BALL TO VISIT"
             }
         }
     },
@@ -189,7 +229,40 @@ const resources = {
                 "save_predictions": "Sauvegarder les Pronostics",
                 "view_my": "Voir Mon Tableau",
                 "your_prediction": "Votre Pronostic",
-                "active_predictors": "Pronostiqueurs Actifs"
+                "active_predictors": "Pronostiqueurs Actifs",
+                "not_set": "Non Défini",
+                "saving": "Sauvegarde...",
+                "signin_to_predict": "Se connecter pour pronostiquer",
+                "generating": "Génération...",
+                "final_bracket": "Tableau Final",
+                "knockout_stage": "Phase à Élimination Directe",
+                "r16": "8èmes de finale",
+                "qf": "Quarts de finale",
+                "sf": "Demi-finales",
+                "final_label": "Finale",
+                "champion_2025": "Champion 2025",
+                "tbd": "À déterminer",
+                "tbd_short": "TBD",
+                "share": {
+                    "preparing": "Préparation de l'image...",
+                    "preparing_desc": "Veuillez patienter pendant la génération de votre tableau.",
+                    "ready": "Image prête",
+                    "ready_desc": "Choisissez une option pour partager ou télécharger.",
+                    "error": "Erreur de partage",
+                    "error_desc": "Impossible de générer l'image. Veuillez réessayer ou utiliser une capture d'écran.",
+                    "shared": "Partagé !",
+                    "not_supported": "Partage non supporté",
+                    "not_supported_desc": "Veuillez utiliser le téléchargement à la place.",
+                    "copied": "Image copiée",
+                    "copy_error": "Impossible de copier l'image",
+                    "title": "Partager votre tableau",
+                    "subtitle": "Choisissez une option ci-dessous",
+                    "native": "Partage Natif",
+                    "download": "Télécharger",
+                    "copy": "Copier l'Image",
+                    "close": "Fermer",
+                    "button": "Partager"
+                }
             },
             "groups": {
                 "title": "Groupes",
@@ -214,6 +287,13 @@ const resources = {
                 "placeholder_key": "Entrez votre clé API",
                 "storage_note": "Votre clé API est stockée localement dans votre navigateur",
                 "save_key": "Sauvegarder la Clé"
+            },
+            "portfolios": {
+                "title": "ÉQUIPE D'OR",
+                "subtitle": "Rencontrez les développeurs passionnés derrière la plateforme CANGOAL",
+                "role": "Développeur Fullstack",
+                "card_status": "MEMBRE OFFICIEL",
+                "ball_click": "CLIQUEZ SUR LE BALLON POUR VISITER"
             }
         }
     },
@@ -296,7 +376,40 @@ const resources = {
                 "save_predictions": "حفظ التوقعات",
                 "view_my": "عرض جدولي",
                 "your_prediction": "توقعك",
-                "active_predictors": "المتوقعون النشطون"
+                "active_predictors": "المتوقعون النشطون",
+                "not_set": "لم يتم التحديد",
+                "saving": "جاري الحفظ...",
+                "signin_to_predict": "سجل الدخول للتوقع",
+                "generating": "جاري التحميل...",
+                "final_bracket": "الجدول النهائي",
+                "knockout_stage": "مرحلة خروج المغلوب",
+                "r16": "دور الـ 16",
+                "qf": "ربع النهائي",
+                "sf": "نصف النهائي",
+                "final_label": "النهائي",
+                "champion_2025": "بطل 2025",
+                "tbd": "لم يحدد بعد",
+                "tbd_short": "قيد الانتظار",
+                "share": {
+                    "preparing": "جاري تجهيز الصورة...",
+                    "preparing_desc": "يرجى الانتظار بينما يتم إنشاء الجدول الخاص بك.",
+                    "ready": "الصورة جاهزة",
+                    "ready_desc": "اختر خياراً للمشاركة أو التحميل.",
+                    "error": "خطأ في المشاركة",
+                    "error_desc": "تعذر إنشاء الصورة. يرجى المحاولة مرة أخرى أو استخدام لقطة شاشة.",
+                    "shared": "تمت المشاركة!",
+                    "not_supported": "المشاركة غير مدعومة",
+                    "not_supported_desc": "يرجى استخدام التحميل بدلاً من ذلك.",
+                    "copied": "تم نسخ الصورة",
+                    "copy_error": "تعذر نسخ الصورة",
+                    "title": "شارك جدولك",
+                    "subtitle": "اختر خياراً أدناه",
+                    "native": "مشاركة أصلية",
+                    "download": "تحميل",
+                    "copy": "نسخ الصورة",
+                    "close": "إغلاق",
+                    "button": "مشاركة"
+                }
             },
             "groups": {
                 "title": "المجموعات",
@@ -321,6 +434,13 @@ const resources = {
                 "placeholder_key": "أدخل مفتاح API",
                 "storage_note": "يتم تخزين مفتاح API محليًا في متصفحك",
                 "save_key": "حفظ المفتاح"
+            },
+            "portfolios": {
+                "title": "الفريق الذهبي",
+                "subtitle": "تعرف على المطورين المبدعين وراء منصة CANGOAL",
+                "role": "مطور متكامل",
+                "card_status": "عضو رسمي",
+                "ball_click": "اضغط على الكرة للزيارة"
             }
         }
     }

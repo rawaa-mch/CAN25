@@ -4,12 +4,14 @@ import { FinalMatch } from "./FinalMatch";
 import { Tables } from "@/integrations/supabase/types";
 import { useContext, useRef, useEffect, useState } from "react";
 import { PredictionContext } from "../contexts/PredictionContext";
+import { useTranslation } from "react-i18next";
 
 interface TournamentBracketProps {
   teams: Tables<"teams">[];
 }
 
 export const TournamentBracket = ({ teams }: TournamentBracketProps) => {
+  const { t } = useTranslation();
   // Check if mobile
   const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
 
@@ -206,10 +208,10 @@ export const TournamentBracket = ({ teams }: TournamentBracketProps) => {
           {/* Clean Header Section */}
           <div className="text-center mb-12">
             <h2 className="text-5xl font-bold text-gray-900 mb-2 uppercase tracking-tight">
-              Final Bracket
+              {t('bracket.final_bracket')}
             </h2>
             <p className="text-sm text-gray-500 uppercase tracking-widest">
-              CANGOAL Knockout Stage
+              {t('bracket.knockout_stage')}
             </p>
           </div>
 
@@ -218,7 +220,7 @@ export const TournamentBracket = ({ teams }: TournamentBracketProps) => {
             {/* Left Side - Round of 16 */}
             <div className="flex flex-col gap-4">
               <div className="text-center text-xs text-gray-600 mb-6 uppercase tracking-wider font-semibold">
-                8èmes de finale
+                {t('bracket.r16')}
               </div>
               <div className="flex flex-col gap-6">
                 {roundOf16.slice(0, 4).map((match, i) => (
@@ -246,7 +248,7 @@ export const TournamentBracket = ({ teams }: TournamentBracketProps) => {
             {/* Left Quarter Finals */}
             <div className="flex flex-col gap-4">
               <div className="text-center text-xs text-gray-600 mb-6 uppercase tracking-wider font-semibold">
-                Quarts
+                {t('bracket.qf')}
               </div>
               <div className="flex flex-col gap-[72px]">
                 {qfTeams.slice(0, 2).map((match, i) => (
@@ -268,7 +270,7 @@ export const TournamentBracket = ({ teams }: TournamentBracketProps) => {
             {/* Left Semi Final */}
             <div className="flex flex-col gap-4">
               <div className="text-center text-xs text-gray-600 mb-6 uppercase tracking-wider font-semibold">
-                Demies
+                {t('bracket.sf')}
               </div>
               <InteractiveBracketMatch
                 {...getMatchData('sf-0', 'semiFinals', sfTeams[0].team1, sfTeams[0].team2)}
@@ -292,7 +294,7 @@ export const TournamentBracket = ({ teams }: TournamentBracketProps) => {
                       {/* Small label above */}
                       <div className="absolute -top-8 left-1/2 -translate-x-1/2 whitespace-nowrap">
                         <span className="text-xs text-gray-500 uppercase tracking-widest font-semibold">
-                          Finale
+                          {t('bracket.final_label')}
                         </span>
                       </div>
                     </div>
@@ -300,7 +302,7 @@ export const TournamentBracket = ({ teams }: TournamentBracketProps) => {
                     {/* Champion Label */}
                     <div className="mt-6 text-center">
                       <p className="text-sm text-gray-500 uppercase tracking-widest font-semibold mb-2">
-                        Champion 2025
+                        {t('bracket.champion_2025')}
                       </p>
                       <h2 className="text-5xl font-bold text-amber-600 uppercase tracking-tight">
                         {champion.name}
@@ -321,7 +323,7 @@ export const TournamentBracket = ({ teams }: TournamentBracketProps) => {
             {/* Right Semi Final */}
             <div className="flex flex-col gap-4">
               <div className="text-center text-xs text-gray-600 mb-6 uppercase tracking-wider font-semibold">
-                Demies
+                {t('bracket.sf')}
               </div>
               <InteractiveBracketMatch
                 {...getMatchData('sf-1', 'semiFinals', sfTeams[1].team1, sfTeams[1].team2)}
@@ -338,7 +340,7 @@ export const TournamentBracket = ({ teams }: TournamentBracketProps) => {
             {/* Right Quarter Finals */}
             <div className="flex flex-col gap-4">
               <div className="text-center text-xs text-gray-600 mb-6 uppercase tracking-wider font-semibold">
-                Quarts
+                {t('bracket.qf')}
               </div>
               <div className="flex flex-col gap-[72px]">
                 {qfTeams.slice(2, 4).map((match, i) => (
@@ -364,7 +366,7 @@ export const TournamentBracket = ({ teams }: TournamentBracketProps) => {
             {/* Right Side - Round of 16 */}
             <div className="flex flex-col gap-4">
               <div className="text-center text-xs text-gray-600 mb-6 uppercase tracking-wider font-semibold">
-                8èmes de finale
+                {t('bracket.r16')}
               </div>
               <div className="flex flex-col gap-6">
                 {roundOf16.slice(4, 8).map((match, i) => (
