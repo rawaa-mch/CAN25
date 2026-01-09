@@ -26,7 +26,28 @@ const resources = {
                 "language": "Language",
                 "time_remaining": "Time Remaining",
                 "days": "days",
-                "online": "Online"
+                "online": "Online",
+                "back_to_home": "Back to Home",
+                "create_account": "Create Account",
+                "member_area": "Member Area"
+            },
+            "auth": {
+                "join": "Join",
+                "signin": "Sign in",
+                "elite": "the Elite",
+                "full_name": "Full Name",
+                "placeholder_name": "John Doe",
+                "placeholder_email": "john@example.com",
+                "password": "Password",
+                "strength": "Strength",
+                "strong": "Strong",
+                "medium": "Medium",
+                "weak": "Weak",
+                "create_btn": "Create Account",
+                "signin_btn": "Sign In",
+                "already_member": "Already a member?",
+                "not_registered": "Not registered yet?",
+                "security_note": "Your data is protected by Moroccan Elite security"
             },
             "hero": {
                 "badge": "Africa Cup of Nations",
@@ -173,7 +194,28 @@ const resources = {
                 "language": "Langue",
                 "time_remaining": "Temps Restant",
                 "days": "jours",
-                "online": "En ligne"
+                "online": "En ligne",
+                "back_to_home": "Retour à l'accueil",
+                "create_account": "Créer un compte",
+                "member_area": "Espace Membre"
+            },
+            "auth": {
+                "join": "Rejoindre",
+                "signin": "Connexion",
+                "elite": "l'Élite",
+                "full_name": "Nom Complet",
+                "placeholder_name": "Jean Dupont",
+                "placeholder_email": "jean@exemple.com",
+                "password": "Mot de passe",
+                "strength": "Force",
+                "strong": "Fort",
+                "medium": "Moyen",
+                "weak": "Faible",
+                "create_btn": "Créer mon compte",
+                "signin_btn": "Se Connecter",
+                "already_member": "Déjà membre ?",
+                "not_registered": "Pas encore inscrit ?",
+                "security_note": "Vos données sont protégées par la sécurité Elite Marocaine"
             },
             "hero": {
                 "badge": "Coupe d'Afrique des Nations",
@@ -320,7 +362,28 @@ const resources = {
                 "language": "اللغة",
                 "time_remaining": "الوقت المتبقي",
                 "days": "أيام",
-                "online": "متصل"
+                "online": "متصل",
+                "back_to_home": "العودة للرئيسية",
+                "create_account": "إنشاء حساب",
+                "member_area": "ركن الأعضاء"
+            },
+            "auth": {
+                "join": "انضم",
+                "signin": "دخول",
+                "elite": "للنخبة",
+                "full_name": "الاسم الكامل",
+                "placeholder_name": "أحمد المغربي",
+                "placeholder_email": "example@email.com",
+                "password": "كلمة المرور",
+                "strength": "القوة",
+                "strong": "قوية",
+                "medium": "متوسطة",
+                "weak": "ضعيفة",
+                "create_btn": "إنشاء حساب",
+                "signin_btn": "تسجيل الدخول",
+                "already_member": "هل لديك حساب؟",
+                "not_registered": "ليس لديك حساب؟",
+                "security_note": "بياناتك محمية بواسطة أنظمة حماية النخبة المغربية"
             },
             "hero": {
                 "badge": "كأس الأمم الأفريقية",
