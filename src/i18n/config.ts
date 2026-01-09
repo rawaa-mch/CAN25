@@ -156,6 +156,15 @@ const resources = {
                 "be_the_first": "Be the first to start a conversation!"
             },
             "ai": {
+                "agent": "AI Assistant",
+                "welcome": "Hello! I am your CANGOAL AI assistant. How can I help you today?",
+                "placeholder_input": "Ask me anything...",
+                "thinking": "Thinking...",
+                "error": "Sorry, I encountered an error. Please try again.",
+                "setup_req": "AI Key Required",
+                "setup_desc": "Please provide a Gemini API key in settings to use the AI assistant.",
+                "key_saved": "API Key Saved",
+                "key_desc": "Your API key has been securely stored locally.",
                 "settings": "AI Settings",
                 "api_key": "API Key",
                 "placeholder_key": "Enter your API key",
@@ -324,6 +333,15 @@ const resources = {
                 "be_the_first": "Soyez le premier à lancer une conversation !"
             },
             "ai": {
+                "agent": "Assistant IA",
+                "welcome": "Bonjour ! Je suis votre assistant IA CANGOAL. Comment puis-je vous aider ?",
+                "placeholder_input": "Posez-moi une question...",
+                "thinking": "Réflexion...",
+                "error": "Désolé, j'ai rencontré une erreur. Veuillez réessayer.",
+                "setup_req": "Clé IA Requise",
+                "setup_desc": "Veuillez fournir une clé API Gemini dans les paramètres pour utiliser l'assistant IA.",
+                "key_saved": "Clé API Enregistrée",
+                "key_desc": "Votre clé API a été stockée localement en toute sécurité.",
                 "settings": "Paramètres IA",
                 "api_key": "Clé API",
                 "placeholder_key": "Entrez votre clé API",
@@ -492,6 +510,15 @@ const resources = {
                 "be_the_first": "كن أول من يبدأ محادثة!"
             },
             "ai": {
+                "agent": "مساعد الذكاء الاصطناعي",
+                "welcome": "مرحباً! أنا مساعدك الذكي في CANGOAL. كيف يمكنني مساعدتك اليوم؟",
+                "placeholder_input": "اسألني أي شيء...",
+                "thinking": "جاري التفكير...",
+                "error": "عذراً، حدث خطأ ما. يرجى المحاولة مرة أخرى.",
+                "setup_req": "مفتاح API مطلوب",
+                "setup_desc": "يرجى توفير مفتاح API لـ Gemini في الإعدادات لاستخدام المساعد الذكي.",
+                "key_saved": "تم حفظ المفتاح",
+                "key_desc": "تم حفظ مفتاح API الخاص بك محلياً وبأمان.",
                 "settings": "إعدادات الذكاء الاصطناعي",
                 "api_key": "مفتاح API",
                 "placeholder_key": "أدخل مفتاح API",
