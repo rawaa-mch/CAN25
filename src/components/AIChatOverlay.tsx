@@ -148,13 +148,13 @@ export function AIChatOverlay() {
 
                 <Button
                     onClick={() => setIsOpen(true)}
-                    className="h-28 w-28 p-0 bg-transparent hover:bg-transparent transition-all duration-300 hover:scale-110 border-none shadow-none group relative"
+                    className="h-20 w-20 rounded-full shadow-2xl p-0 z-50 bg-white border-2 border-saffron/20 transition-all duration-300 hover:scale-110 overflow-hidden group"
                 >
-                    <div className="absolute inset-0 bg-saffron/5 rounded-full blur-2xl opacity-0 group-hover:opacity-100 transition-opacity" />
+                    <div className="absolute inset-0 bg-gradient-to-tr from-saffron/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
                     <img
-                        src="/chatbot_lion_final.png"
+                        src="/chatbot_lion_soccer.png"
                         alt="Chat"
-                        className="h-full w-full object-contain drop-shadow-2xl relative z-10 scale-125 [mix-blend-mode:screen]"
+                        className="h-full w-full object-cover relative z-10"
                     />
                 </Button>
             </div>
@@ -165,11 +165,11 @@ export function AIChatOverlay() {
         <Card className="fixed bottom-4 right-4 w-[350px] h-[500px] shadow-2xl z-50 flex flex-col animate-in slide-in-from-bottom-5 fade-in duration-300 border-primary/20 backdrop-blur-sm bg-background/95">
             <CardHeader className="p-3 border-b flex flex-row items-center justify-between space-y-0 bg-muted/30">
                 <div className="flex items-center gap-2">
-                    <div className="h-10 w-10 overflow-hidden bg-black rounded-full">
+                    <div className="h-10 w-10 rounded-full overflow-hidden border border-primary/20 bg-white">
                         <img
-                            src="/chatbot_lion_final.png"
+                            src="/chatbot_lion_soccer.png"
                             alt="AI"
-                            className="h-full w-full object-contain scale-125 [mix-blend-mode:screen]"
+                            className="h-full w-full object-cover"
                         />
                     </div>
                     <CardTitle className="text-sm font-medium">{t('ai.agent')}</CardTitle>
