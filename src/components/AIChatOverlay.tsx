@@ -124,12 +124,12 @@ export function AIChatOverlay() {
         return (
             <Button
                 onClick={() => setIsOpen(true)}
-                className="fixed bottom-4 right-4 h-14 w-14 rounded-full shadow-lg p-0 z-50 bg-transparent hover:bg-transparent transition-all duration-300 hover:scale-110 overflow-hidden"
+                className="fixed bottom-4 right-4 h-24 w-24 p-0 z-50 bg-transparent hover:bg-transparent transition-all duration-300 hover:scale-110 border-none shadow-none"
             >
                 <img
                     src="/chatbot_icon_new.png"
                     alt="Chat"
-                    className="h-full w-full object-cover"
+                    className="h-full w-full object-contain drop-shadow-2xl"
                 />
             </Button>
         );
@@ -139,11 +139,11 @@ export function AIChatOverlay() {
         <Card className="fixed bottom-4 right-4 w-[350px] h-[500px] shadow-2xl z-50 flex flex-col animate-in slide-in-from-bottom-5 fade-in duration-300 border-primary/20 backdrop-blur-sm bg-background/95">
             <CardHeader className="p-3 border-b flex flex-row items-center justify-between space-y-0 bg-muted/30">
                 <div className="flex items-center gap-2">
-                    <div className="h-8 w-8 rounded-full overflow-hidden border border-primary/20">
+                    <div className="h-10 w-10 overflow-hidden">
                         <img
                             src="/chatbot_icon_new.png"
                             alt="AI"
-                            className="h-full w-full object-cover"
+                            className="h-full w-full object-contain"
                         />
                     </div>
                     <CardTitle className="text-sm font-medium">{t('ai.agent')}</CardTitle>
