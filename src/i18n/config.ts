@@ -177,6 +177,15 @@ const resources = {
                 "role": "Fullstack Developer",
                 "card_status": "OFFICIAL MEMBER",
                 "ball_click": "CLICK THE BALL TO VISIT"
+            },
+            "profile_setup": {
+                "title": "Complete Profile",
+                "subtitle": "Join the Action",
+                "welcome": "Welcome to CANGOAL! Let's get your profile set up.",
+                "label_name": "Display Name",
+                "placeholder_name": "Enter your name",
+                "label_team": "Favorite Team",
+                "btn_join": "Complete Setup"
             }
         }
     },
@@ -354,6 +363,15 @@ const resources = {
                 "role": "Développeur Fullstack",
                 "card_status": "MEMBRE OFFICIEL",
                 "ball_click": "CLIQUEZ SUR LE BALLON POUR VISITER"
+            },
+            "profile_setup": {
+                "title": "Compléter le Profil",
+                "subtitle": "Rejoignez l'Action",
+                "welcome": "Bienvenue sur CANGOAL ! Configurons votre profil.",
+                "label_name": "Nom d'affichage",
+                "placeholder_name": "Entrez votre nom",
+                "label_team": "Équipe Favorite",
+                "btn_join": "Terminer la configuration"
             }
         }
     },
@@ -531,6 +549,15 @@ const resources = {
                 "role": "مطور متكامل",
                 "card_status": "عضو رسمي",
                 "ball_click": "اضغط على الكرة للزيارة"
+            },
+            "profile_setup": {
+                "title": "إكمال الملف الشخصي",
+                "subtitle": "انضم إلى الحدث",
+                "welcome": "مرحبًا بك في CANGOAL! لنقم بإعداد ملفك الشخصي.",
+                "label_name": "الاسم المعروض",
+                "placeholder_name": "أدخل اسمك",
+                "label_team": "الفريق المفضل",
+                "btn_join": "إتمام الإعداد"
             }
         }
     }
